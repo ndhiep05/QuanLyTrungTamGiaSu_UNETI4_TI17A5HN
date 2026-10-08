@@ -1,0 +1,49 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model DiemDanhTheoBuoiViewModel
+@{
+    ViewData["Title"] = "Điểm danh buổi học";
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Điểm danh buổi học</h1>
+        <p class="page-sub">@Model.TenLop &middot; Gia sư @Model.TenGiaSu &middot; @Model.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @Model.ThoiGianKetThuc.ToString("HH:mm")</p>
+    </div>
+    <a asp-controller="LichHoc" asp-action="Index" class="btn btn-light">Quay lại lịch học</a>
+</div>
+<div class="card form-card">
+    <div class="card-body">
+        @if (Model.DanhSach.Count == 0)
+        {
+            <div class="empty-state"><i class="bi bi-people"></i>Lớp chưa có học viên đã xác nhận để điểm danh.</div>
+        }
+        else
+        {
+            <form asp-action="TheoBuoi" method="post">
+                <input type="hidden" asp-for="MaLichHoc" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                @for (var i = 0; i < Model.DanhSach.Count; i++)
+                {
+                    <div class="dd-row">
+                        <input type="hidden" asp-for="DanhSach[i].MaHocVien" />
+                        <input type="hidden" asp-for="DanhSach[i].HoTen" />
+                        <div class="dd-name">@Model.DanhSach[i].HoTen</div>
+                        <div class="btn-group" role="group">
+                            <input type="radio" class="btn-check" asp-for="DanhSach[i].TrangThaiDiemDanh" value="@TrangThaiDiemDanh.CoMat" id="dd_@(i)_co" />
+                            <label class="btn btn-outline-success btn-sm" for="dd_@(i)_co">Có mặt</label>
+                            <input type="radio" class="btn-check" asp-for="DanhSach[i].TrangThaiDiemDanh" value="@TrangThaiDiemDanh.VangCoPhep" id="dd_@(i)_cp" />
+                            <label class="btn btn-outline-warning btn-sm" for="dd_@(i)_cp">Vắng có phép</label>
+                            <input type="radio" class="btn-check" asp-for="DanhSach[i].TrangThaiDiemDanh" value="@TrangThaiDiemDanh.VangKhongPhep" id="dd_@(i)_kp" />
+                            <label class="btn btn-outline-danger btn-sm" for="dd_@(i)_kp">Vắng không phép</label>
+                        </div>
+                        <input asp-for="DanhSach[i].GhiChu" class="form-control form-control-sm" style="max-width: 260px" placeholder="Ghi chú" />
+                    </div>
+                }
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-check2-square me-1"></i> Lưu điểm danh</button>
+                    <a asp-controller="LichHoc" asp-action="Index" class="btn btn-light">Hủy</a>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

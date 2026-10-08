@@ -1,0 +1,24 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.MonHoc
+<div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="TenMonHoc" class="form-label"></label>
+            <input asp-for="TenMonHoc" class="form-control"  />
+            <span asp-validation-for="TenMonHoc" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="CapDo" class="form-label"></label>
+            <select asp-for="CapDo" class="form-select"><option value="">-- Chọn --</option><option>Cơ bản</option><option>Trung bình</option><option>Nâng cao</option></select>
+            <span asp-validation-for="CapDo" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="MoTa" class="form-label"></label>
+            <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="MoTa" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TrangThai" class="form-label"></label>
+            <select asp-for="TrangThai" class="form-select"><option value="">-- Chọn --</option><option>Hoạt động</option><option>Khóa</option></select>
+            <span asp-validation-for="TrangThai" class="text-danger"></span>
+        </div>
+</div>

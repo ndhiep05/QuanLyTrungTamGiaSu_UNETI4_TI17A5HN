@@ -1,0 +1,49 @@
+@* Họ và tên: Nguyễn Đình Hiệp | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.HocVien
+<div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="MaTaiKhoan" class="form-label"></label>
+            <select asp-for="MaTaiKhoan" asp-items="ViewBag.TaiKhoanList" class="form-select"><option value="">-- Chọn tài khoản học viên --</option></select>
+            <span asp-validation-for="MaTaiKhoan" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="HoTen" class="form-label"></label>
+            <input asp-for="HoTen" class="form-control"  />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="NgaySinh" class="form-label"></label>
+            <input asp-for="NgaySinh" class="form-control"  />
+            <span asp-validation-for="NgaySinh" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="GioiTinh" class="form-label"></label>
+            <div class="pt-1"><div class="form-check form-check-inline"><input class="form-check-input" type="radio" asp-for="GioiTinh" value="Nam" id="GioiTinh_0" /><label class="form-check-label" for="GioiTinh_0">Nam</label></div><div class="form-check form-check-inline"><input class="form-check-input" type="radio" asp-for="GioiTinh" value="Nữ" id="GioiTinh_1" /><label class="form-check-label" for="GioiTinh_1">Nữ</label></div><div class="form-check form-check-inline"><input class="form-check-input" type="radio" asp-for="GioiTinh" value="Khác" id="GioiTinh_2" /><label class="form-check-label" for="GioiTinh_2">Khác</label></div></div>
+            <span asp-validation-for="GioiTinh" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="SoDienThoai" class="form-label"></label>
+            <input asp-for="SoDienThoai" class="form-control"  />
+            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control"  />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DiaChi" class="form-label"></label>
+            <input asp-for="DiaChi" class="form-control"  />
+            <span asp-validation-for="DiaChi" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TrinhDoHienTai" class="form-label"></label>
+            <input asp-for="TrinhDoHienTai" class="form-control"  />
+            <span asp-validation-for="TrinhDoHienTai" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TrangThai" class="form-label"></label>
+            <select asp-for="TrangThai" class="form-select"><option value="">-- Chọn --</option><option>Hoạt động</option><option>Khóa</option></select>
+            <span asp-validation-for="TrangThai" class="text-danger"></span>
+        </div>
+</div>

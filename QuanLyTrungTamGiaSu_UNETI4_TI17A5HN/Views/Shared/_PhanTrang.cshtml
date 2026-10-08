@@ -1,0 +1,43 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model PhanTrangViewModel
+@{
+    // Giữ nguyên mọi tham số tìm kiếm/lọc/sắp xếp, chỉ đổi page (yêu cầu mục 15 của đề)
+    string Link(int p)
+    {
+        var parts = Context.Request.Query
+            .Where(q => !string.Equals(q.Key, "page", StringComparison.OrdinalIgnoreCase))
+            .Select(q => Uri.EscapeDataString(q.Key) + "=" + Uri.EscapeDataString(q.Value.ToString()))
+            .ToList();
+        parts.Add("page=" + p);
+        return Context.Request.PathBase + Context.Request.Path + "?" + string.Join("&", parts);
+    }
+    var tong = Model.TotalPages;
+    var tu = Math.Max(1, Model.Page - 2);
+    var den = Math.Min(tong, Model.Page + 2);
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <small class="text-muted">Hiển thị @Model.TuMuc - @Model.DenMuc / @Model.TotalItems</small>
+    @if (tong > 1)
+    {
+        <nav aria-label="Phân trang">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @(Model.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Link(Model.Page - 1)">&laquo;</a></li>
+                @if (tu > 1)
+                {
+                    <li class="page-item"><a class="page-link" href="@Link(1)">1</a></li>
+                    if (tu > 2) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                }
+                @for (var trang = tu; trang <= den; trang++)
+                {
+                    <li class="page-item @(trang == Model.Page ? "active" : "")"><a class="page-link" href="@Link(trang)">@trang</a></li>
+                }
+                @if (den < tong)
+                {
+                    if (den < tong - 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+                    <li class="page-item"><a class="page-link" href="@Link(tong)">@tong</a></li>
+                }
+                <li class="page-item @(Model.Page >= tong ? "disabled" : "")"><a class="page-link" href="@Link(Model.Page + 1)">&raquo;</a></li>
+            </ul>
+        </nav>
+    }
+</div>

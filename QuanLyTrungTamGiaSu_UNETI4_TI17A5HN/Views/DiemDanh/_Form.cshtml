@@ -1,0 +1,24 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.DiemDanh
+<div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="MaLichHoc" class="form-label"></label>
+            <select asp-for="MaLichHoc" asp-items="ViewBag.LichHocList" class="form-select"><option value="">-- Chọn buổi học --</option></select>
+            <span asp-validation-for="MaLichHoc" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="MaHocVien" class="form-label"></label>
+            <select asp-for="MaHocVien" asp-items="ViewBag.HocVienList" class="form-select"><option value="">-- Chọn học viên --</option></select>
+            <span asp-validation-for="MaHocVien" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TrangThaiDiemDanh" class="form-label"></label>
+            <select asp-for="TrangThaiDiemDanh" class="form-select"><option value="">-- Chọn --</option><option>Có mặt</option><option>Vắng có phép</option><option>Vắng không phép</option></select>
+            <span asp-validation-for="TrangThaiDiemDanh" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="GhiChu" class="form-label"></label>
+            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="GhiChu" class="text-danger"></span>
+        </div>
+</div>

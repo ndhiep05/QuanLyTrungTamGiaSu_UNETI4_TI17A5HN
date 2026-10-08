@@ -1,0 +1,33 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.DangKyLop
+@{
+    ViewData["Title"] = "Xóa đăng ký lớp";
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Xóa đăng ký lớp</h1>
+        <p class="page-sub">Thao tác này không thể hoàn tác</p>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-body">
+        <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-1"></i> Bạn có chắc chắn muốn xóa đăng ký lớp này không?</div>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Học viên</dt>
+            <dd class="col-sm-9">@(Model.HocVien?.HoTen)</dd>
+            <dt class="col-sm-3">Lớp học</dt>
+            <dd class="col-sm-9">@(Model.LopHoc?.TenLop)</dd>
+            <dt class="col-sm-3">Ngày đăng ký</dt>
+            <dd class="col-sm-9">@(Model.NgayDangKy.ToString("dd/MM/yyyy HH:mm"))</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
+        </dl>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="MaDangKy" />
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa</button>
+                <a asp-action="Index" class="btn btn-light">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

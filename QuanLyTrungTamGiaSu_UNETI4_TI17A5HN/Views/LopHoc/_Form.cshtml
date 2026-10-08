@@ -1,0 +1,56 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.LopHoc
+@{
+    // Trường chỉ cho phép đổi khi Sửa (vd. trạng thái theo nghiệp vụ)
+    var laSua = ViewContext.RouteData.Values["action"]?.ToString() == "Edit";
+}
+<div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="TenLop" class="form-label"></label>
+            <input asp-for="TenLop" class="form-control"  />
+            <span asp-validation-for="TenLop" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="MaMonHoc" class="form-label"></label>
+            <select asp-for="MaMonHoc" asp-items="ViewBag.MonHocList" class="form-select"><option value="">-- Chọn môn học --</option></select>
+            <span asp-validation-for="MaMonHoc" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="TrinhDoLop" class="form-label"></label>
+            <select asp-for="TrinhDoLop" class="form-select"><option value="">-- Chọn --</option><option>Cơ bản</option><option>Trung bình</option><option>Nâng cao</option></select>
+            <span asp-validation-for="TrinhDoLop" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="SiSoToiDa" class="form-label"></label>
+            <input asp-for="SiSoToiDa" class="form-control" min="1" />
+            <span asp-validation-for="SiSoToiDa" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="NgayBatDau" class="form-label"></label>
+            <input asp-for="NgayBatDau" class="form-control"  />
+            <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="NgayKetThuc" class="form-label"></label>
+            <input asp-for="NgayKetThuc" class="form-control"  />
+            <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="HocPhi" class="form-label"></label>
+            <input asp-for="HocPhi" class="form-control" type="number" min="0" step="any" />
+            <span asp-validation-for="HocPhi" class="text-danger"></span>
+        </div>
+        @if (laSua)
+        {
+        <div class="col-md-6">
+            <label asp-for="TrangThai" class="form-label"></label>
+            <select asp-for="TrangThai" class="form-select"><option value="">-- Chọn --</option><option>Chưa mở đăng ký</option><option>Đang mở đăng ký</option><option>Đã đủ</option><option>Đang học</option><option>Đã kết thúc</option><option>Đã hủy</option></select>
+            <span asp-validation-for="TrangThai" class="text-danger"></span>
+        </div>
+        }
+        <div class="col-12">
+            <label asp-for="MoTa" class="form-label"></label>
+            <textarea asp-for="MoTa" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="MoTa" class="text-danger"></span>
+        </div>
+</div>

@@ -1,0 +1,71 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.LopHoc
+@{
+    ViewData["Title"] = "Chi tiết lớp học";
+    var laAdmin = Context.Session.GetString("VaiTro") == "Admin";
+    var vaiTro = Context.Session.GetString("VaiTro");
+    int siSoHienTai = 0;
+    if (ViewBag.SiSoHienTai is int s) { siSoHienTai = s; }
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Chi tiết lớp học</h1>
+    </div>
+    <div class="d-flex gap-2">
+        @if (vaiTro == "HocVien" && Model.TrangThai == TrangThaiLop.DangMoDangKy)
+        {
+            <form asp-controller="DangKyLop" asp-action="DangKy" method="post">
+                <input type="hidden" name="maLop" value="@Model.MaLop" />
+                <button type="submit" class="btn btn-success"><i class="bi bi-clipboard-check me-1"></i> Đăng ký lớp</button>
+            </form>
+        }
+        @if (laAdmin)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.MaLop" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Sửa</a>
+        }
+        <a asp-action="Index" class="btn btn-light">Quay lại</a>
+    </div>
+</div>
+<div class="card form-card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Tên lớp</dt>
+            <dd class="col-sm-9">@(Model.TenLop)</dd>
+            <dt class="col-sm-3">Môn học</dt>
+            <dd class="col-sm-9">@(Model.MonHoc?.TenMonHoc)</dd>
+            <dt class="col-sm-3">Trình độ</dt>
+            <dd class="col-sm-9">@(Model.TrinhDoLop)</dd>
+            <dt class="col-sm-3">Ngày bắt đầu</dt>
+            <dd class="col-sm-9">@(Model.NgayBatDau.ToString("dd/MM/yyyy"))</dd>
+            <dt class="col-sm-3">Ngày kết thúc</dt>
+            <dd class="col-sm-9">@(Model.NgayKetThuc.ToString("dd/MM/yyyy"))</dd>
+            <dt class="col-sm-3">Sĩ số</dt>
+            <dd class="col-sm-9">@(siSoHienTai + " / " + Model.SiSoToiDa)</dd>
+            <dt class="col-sm-3">Học phí</dt>
+            <dd class="col-sm-9">@(Model.HocPhi.ToString("N0")) ₫</dd>
+            <dt class="col-sm-3">Mô tả</dt>
+            <dd class="col-sm-9">@(Model.MoTa)</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
+        </dl>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-header fw-bold"><i class="bi bi-person-workspace me-2"></i>Gia sư phụ trách</div>
+    @if (Model.PhanCongs.Any())
+    {
+        <ul class="list-group list-group-flush">
+        @foreach (var p in Model.PhanCongs)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>@(p.GiaSu?.HoTen)</span>
+                <partial name="_TrangThaiBadge" model="p.TrangThai" />
+            </li>
+        }
+        </ul>
+    }
+    else
+    {
+        <div class="empty-state"><i class="bi bi-inbox"></i>Lớp chưa được phân công gia sư.</div>
+    }
+</div>

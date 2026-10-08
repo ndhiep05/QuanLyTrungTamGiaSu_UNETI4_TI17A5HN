@@ -1,8 +1,50 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@* Họ và tên: Nguyễn Đình Hiệp | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@{
+    ViewData["Title"] = "Trang chủ";
+    var vaiTro = Context.Session.GetString("VaiTro");
+    var hoTen = Context.Session.GetString("HoTen");
 }
+<div class="hero">
+    @if (string.IsNullOrEmpty(vaiTro))
+    {
+        <h1>Hệ thống quản lý trung tâm gia sư</h1>
+        <p class="lead mb-4">Quản lý môn học, gia sư, lớp học, đăng ký, lịch học, điểm danh và học phí trên một nền tảng duy nhất.</p>
+        <a asp-controller="TaiKhoan" asp-action="DangNhap" class="btn btn-light btn-lg"><i class="bi bi-box-arrow-in-right me-1"></i> Đăng nhập</a>
+    }
+    else
+    {
+        <h1>Xin chào, @(hoTen)!</h1>
+        <p class="lead mb-0">Chọn một chức năng ở menu bên trái để bắt đầu làm việc.</p>
+    }
+</div>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row g-3">
+    <div class="col-md-6 col-xl-3">
+        <div class="card feature-card">
+            <div class="stat-icon stat-indigo"><i class="bi bi-person-workspace"></i></div>
+            <h6 class="fw-bold">Gia sư &amp; chuyên môn</h6>
+            <p class="text-muted mb-0">Hồ sơ gia sư kèm các môn dạy và trình độ chuyên môn.</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card feature-card">
+            <div class="stat-icon stat-green"><i class="bi bi-clipboard-check"></i></div>
+            <h6 class="fw-bold">Đăng ký lớp học</h6>
+            <p class="text-muted mb-0">Học viên đăng ký lớp, trung tâm xác nhận theo sĩ số còn lại.</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card feature-card">
+            <div class="stat-icon stat-amber"><i class="bi bi-calendar-week"></i></div>
+            <h6 class="fw-bold">Lịch học &amp; điểm danh</h6>
+            <p class="text-muted mb-0">Lập lịch không trùng và theo dõi chuyên cần từng buổi học.</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="card feature-card">
+            <div class="stat-icon stat-blue"><i class="bi bi-cash-coin"></i></div>
+            <h6 class="fw-bold">Học phí &amp; thống kê</h6>
+            <p class="text-muted mb-0">Theo dõi học phí đã thu, còn thiếu và các số liệu tổng hợp.</p>
+        </div>
+    </div>
 </div>
