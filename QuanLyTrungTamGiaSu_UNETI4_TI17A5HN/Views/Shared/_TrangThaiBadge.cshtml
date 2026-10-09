@@ -1,0 +1,15 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model string
+@{
+    var t = Model ?? "";
+    var mau = t switch
+    {
+        "Hoạt động" or "Đang mở đăng ký" or "Đã xác nhận" or "Có mặt" or "Đang phụ trách" => "success",
+        "Khóa" or "Đã hủy" or "Vắng không phép" => "danger",
+        "Chờ xác nhận" or "Chưa mở đăng ký" or "Đã lên lịch" or "Vắng có phép" => "warning",
+        "Đang học" or "Đã đủ" => "info",
+        "Hoàn thành" or "Đã hoàn thành" or "Đã kết thúc" => "secondary",
+        _ => "light"
+    };
+}
+<span class="badge badge-soft-@mau">@t</span>

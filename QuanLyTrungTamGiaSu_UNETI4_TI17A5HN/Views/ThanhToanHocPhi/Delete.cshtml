@@ -1,0 +1,35 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.ThanhToanHocPhi
+@{
+    ViewData["Title"] = "Xóa thanh toán học phí";
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Xóa thanh toán học phí</h1>
+        <p class="page-sub">Thao tác này không thể hoàn tác</p>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-body">
+        <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-1"></i> Bạn có chắc chắn muốn xóa thanh toán học phí này không?</div>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Học viên</dt>
+            <dd class="col-sm-9">@(Model.DangKyLop?.HocVien?.HoTen)</dd>
+            <dt class="col-sm-3">Lớp học</dt>
+            <dd class="col-sm-9">@(Model.DangKyLop?.LopHoc?.TenLop)</dd>
+            <dt class="col-sm-3">Ngày thanh toán</dt>
+            <dd class="col-sm-9">@(Model.NgayThanhToan.ToString("dd/MM/yyyy HH:mm"))</dd>
+            <dt class="col-sm-3">Số tiền</dt>
+            <dd class="col-sm-9">@(Model.SoTien.ToString("N0")) ₫</dd>
+            <dt class="col-sm-3">Phương thức</dt>
+            <dd class="col-sm-9">@(Model.PhuongThuc)</dd>
+        </dl>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="MaThanhToan" />
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa</button>
+                <a asp-action="Index" class="btn btn-light">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.LichHoc
+@{
+    // Trường chỉ cho phép đổi khi Sửa (vd. trạng thái theo nghiệp vụ)
+    var laSua = ViewContext.RouteData.Values["action"]?.ToString() == "Edit";
+}
+<div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="MaLop" class="form-label"></label>
+            <select asp-for="MaLop" asp-items="ViewBag.LopHocList" class="form-select"><option value="">-- Chọn lớp học --</option></select>
+            <span asp-validation-for="MaLop" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="MaGiaSu" class="form-label"></label>
+            <select asp-for="MaGiaSu" asp-items="ViewBag.GiaSuList" class="form-select"><option value="">-- Chọn gia sư --</option></select>
+            <span asp-validation-for="MaGiaSu" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ThoiGianBatDau" class="form-label"></label>
+            <input asp-for="ThoiGianBatDau" class="form-control"  />
+            <span asp-validation-for="ThoiGianBatDau" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="ThoiGianKetThuc" class="form-label"></label>
+            <input asp-for="ThoiGianKetThuc" class="form-control"  />
+            <span asp-validation-for="ThoiGianKetThuc" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="PhongHocHoacHinhThuc" class="form-label"></label>
+            <input asp-for="PhongHocHoacHinhThuc" class="form-control"  />
+            <span asp-validation-for="PhongHocHoacHinhThuc" class="text-danger"></span>
+        </div>
+        @if (laSua)
+        {
+        <div class="col-md-6">
+            <label asp-for="TrangThai" class="form-label"></label>
+            <select asp-for="TrangThai" class="form-select"><option value="">-- Chọn --</option><option>Đã lên lịch</option><option>Đã hoàn thành</option><option>Đã hủy</option></select>
+            <span asp-validation-for="TrangThai" class="text-danger"></span>
+        </div>
+        }
+        <div class="col-12">
+            <label asp-for="GhiChu" class="form-label"></label>
+            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="GhiChu" class="text-danger"></span>
+        </div>
+</div>

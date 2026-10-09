@@ -1,0 +1,50 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var cards = new (string Nhan, string GiaTri, string Icon, string Mau)[]
+    {
+        ("Tổng số môn học", Model.TongMonHoc.ToString("N0"), "bi-journal-bookmark", "stat-indigo"),
+        ("Gia sư đang hoạt động", Model.GiaSuHoatDong.ToString("N0"), "bi-person-workspace", "stat-green"),
+        ("Tổng số học viên", Model.TongHocVien.ToString("N0"), "bi-people", "stat-blue"),
+        ("Lớp đang mở đăng ký", Model.LopDangMoDangKy.ToString("N0"), "bi-door-open", "stat-teal"),
+        ("Lớp đang học", Model.LopDangHoc.ToString("N0"), "bi-easel", "stat-indigo"),
+        ("Đăng ký chờ xác nhận", Model.DangKyChoXacNhan.ToString("N0"), "bi-hourglass-split", "stat-amber"),
+        ("Lớp đã đủ sĩ số", Model.LopDaDuSiSo.ToString("N0"), "bi-people-fill", "stat-rose"),
+        ("Buổi học sắp tới", Model.BuoiHocSapToi.ToString("N0"), "bi-calendar-event", "stat-blue"),
+        ("Học phí đã thu trong kỳ", Model.TongHocPhiDaThu.ToString("N0") + " ₫", "bi-cash-stack", "stat-green"),
+        ("Đăng ký còn thiếu học phí", Model.DangKyConThieuHocPhi.ToString("N0"), "bi-exclamation-circle", "stat-rose")
+    };
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-sub">Tổng quan hoạt động của trung tâm</p>
+    </div>
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-end">
+        <div>
+            <label class="form-label small mb-1" for="tuNgay">Từ ngày</label>
+            <input type="date" id="tuNgay" name="tuNgay" class="form-control form-control-sm" value="@Model.TuNgay?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div>
+            <label class="form-label small mb-1" for="denNgay">Đến ngày</label>
+            <input type="date" id="denNgay" name="denNgay" class="form-control form-control-sm" value="@Model.DenNgay?.ToString("yyyy-MM-dd")" />
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Xem</button>
+    </form>
+</div>
+
+<div class="row g-3">
+    @foreach (var c in cards)
+    {
+        <div class="col-sm-6 col-xl-4">
+            <div class="card stat-card">
+                <div class="stat-icon @c.Mau"><i class="bi @c.Icon"></i></div>
+                <div>
+                    <div class="stat-value">@c.GiaTri</div>
+                    <div class="stat-label">@c.Nhan</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,33 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.MonHoc
+@{
+    ViewData["Title"] = "Xóa môn học";
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Xóa môn học</h1>
+        <p class="page-sub">Thao tác này không thể hoàn tác</p>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-body">
+        <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-1"></i> Bạn có chắc chắn muốn xóa môn học này không?</div>
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Tên môn học</dt>
+            <dd class="col-sm-9">@(Model.TenMonHoc)</dd>
+            <dt class="col-sm-3">Cấp độ</dt>
+            <dd class="col-sm-9">@(Model.CapDo)</dd>
+            <dt class="col-sm-3">Mô tả</dt>
+            <dd class="col-sm-9">@(Model.MoTa != null && Model.MoTa.Length > 60 ? Model.MoTa[..60] + "…" : Model.MoTa)</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
+        </dl>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="MaMonHoc" />
+            <div class="form-actions">
+                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa</button>
+                <a asp-action="Index" class="btn btn-light">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>

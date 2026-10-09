@@ -1,0 +1,114 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model IEnumerable<QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.GiaSu>
+@{
+    ViewData["Title"] = "Gia sư";
+    var vaiTro = Context.Session.GetString("VaiTro");
+    var laAdmin = vaiTro == "Admin";
+    string? tuKhoa = ViewBag.TuKhoa as string;
+    string? trinhDo = ViewBag.TrinhDo as string;
+    string? trangThai = ViewBag.TrangThai as string;
+    string? sapXep = ViewBag.SapXep as string;
+    string kinhNghiem = Convert.ToString(ViewBag.KinhNghiem) ?? "";
+    var pt = ViewBag.PhanTrang as PhanTrangViewModel;
+    var dsTrinhDo = new[] { "Cao đẳng", "Đại học", "Thạc sĩ", "Tiến sĩ" };
+    var dsTrangThai = new[] { "Hoạt động", "Khóa" };
+    var dsSapXep = new[] { ("ten_tang", "Tên A → Z"), ("ten_giam", "Tên Z → A"), ("kn_giam", "Kinh nghiệm cao → thấp"), ("kn_tang", "Kinh nghiệm thấp → cao") };
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Gia sư</h1>
+        <p class="page-sub">Tìm kiếm, lọc, sắp xếp và phân trang danh sách gia sư</p>
+    </div>
+    @if (laAdmin)
+    {
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm gia sư</a>
+    }
+</div>
+
+<div class="card card-table">
+    <div class="card-header">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4 col-xl-3">
+                <label class="form-label small mb-1">Từ khóa</label>
+                <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control" placeholder="Tên, điện thoại, email..." />
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Môn học</label>
+                <select name="maMonHoc" asp-items="ViewBag.MonHocList" class="form-select"><option value="">Tất cả</option></select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Trình độ</label>
+                <select name="trinhDo" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var t in dsTrinhDo) { <option value="@t" selected="@(trinhDo == t)">@t</option> }
+                </select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Kinh nghiệm tối thiểu (năm)</label>
+                <input type="number" min="0" name="kinhNghiem" value="@kinhNghiem" class="form-control" />
+            </div>
+            <div class="col-md-4 col-xl-1">
+                <label class="form-label small mb-1">Trạng thái</label>
+                <select name="trangThai" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var t in dsTrangThai) { <option value="@t" selected="@(trangThai == t)">@t</option> }
+                </select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Sắp xếp</label>
+                <select name="sapXep" class="form-select">
+                    @foreach (var (v, t) in dsSapXep) { <option value="@v" selected="@(sapXep == v)">@t</option> }
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i> Lọc</button>
+                <a asp-action="Index" class="btn btn-light">Đặt lại</a>
+            </div>
+        </form>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state"><i class="bi bi-inbox"></i>Không tìm thấy gia sư phù hợp.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr><th>Họ tên</th><th>Liên hệ</th><th>Trình độ</th><th>Kinh nghiệm</th><th>Môn dạy</th><th>Trạng thái</th><th></th></tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Details" asp-route-id="@item.MaGiaSu" class="fw-semibold">@item.HoTen</a></td>
+                        <td>@item.SoDienThoai<br /><small class="text-muted">@item.Email</small></td>
+                        <td>@item.TrinhDo</td>
+                        <td>@item.SoNamKinhNghiem năm</td>
+                        <td>
+                            @foreach (var c in item.ChuyenMons.Where(c => c.MonHoc != null))
+                            {
+                                <span class="chip">@c.MonHoc!.TenMonHoc</span>
+                            }
+                        </td>
+                        <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Details" asp-route-id="@item.MaGiaSu" class="btn btn-sm btn-outline-secondary" title="Chi tiết"><i class="bi bi-eye"></i></a>
+                            @if (laAdmin)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.MaGiaSu" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.MaGiaSu" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (pt != null && pt.TotalItems > 0)
+    {
+        <div class="card-footer"><partial name="_PhanTrang" model="pt" /></div>
+    }
+</div>

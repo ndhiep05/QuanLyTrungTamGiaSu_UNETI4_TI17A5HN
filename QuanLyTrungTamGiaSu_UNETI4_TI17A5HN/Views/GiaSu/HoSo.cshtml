@@ -1,0 +1,60 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.GiaSu
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Hồ sơ cá nhân</h1>
+        <p class="page-sub">Cập nhật thông tin của chính bạn</p>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="HoSo" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="MaGiaSu" />
+            <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="HoTen" class="form-label"></label>
+            <input asp-for="HoTen" class="form-control"  />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="NgaySinh" class="form-label"></label>
+            <input asp-for="NgaySinh" class="form-control"  />
+            <span asp-validation-for="NgaySinh" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="GioiTinh" class="form-label"></label>
+            <div class="pt-1"><div class="form-check form-check-inline"><input class="form-check-input" type="radio" asp-for="GioiTinh" value="Nam" id="GioiTinh_0" /><label class="form-check-label" for="GioiTinh_0">Nam</label></div><div class="form-check form-check-inline"><input class="form-check-input" type="radio" asp-for="GioiTinh" value="Nữ" id="GioiTinh_1" /><label class="form-check-label" for="GioiTinh_1">Nữ</label></div><div class="form-check form-check-inline"><input class="form-check-input" type="radio" asp-for="GioiTinh" value="Khác" id="GioiTinh_2" /><label class="form-check-label" for="GioiTinh_2">Khác</label></div></div>
+            <span asp-validation-for="GioiTinh" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="SoDienThoai" class="form-label"></label>
+            <input asp-for="SoDienThoai" class="form-control"  />
+            <span asp-validation-for="SoDienThoai" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label"></label>
+            <input asp-for="Email" class="form-control"  />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="DiaChi" class="form-label"></label>
+            <input asp-for="DiaChi" class="form-control"  />
+            <span asp-validation-for="DiaChi" class="text-danger"></span>
+        </div>
+        <div class="col-12">
+            <label asp-for="GioiThieu" class="form-label"></label>
+            <textarea asp-for="GioiThieu" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="GioiThieu" class="text-danger"></span>
+        </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Lưu hồ sơ</button>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

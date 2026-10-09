@@ -1,0 +1,25 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.HocVien
+@{
+    ViewData["Title"] = "Sửa học viên";
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Sửa học viên</h1>
+        <p class="page-sub">Cập nhật thông tin và bấm Lưu thay đổi</p>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+            <input type="hidden" asp-for="MaHocVien" />
+            <partial name="_Form" model="Model" />
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Lưu thay đổi</button>
+                <a asp-action="Index" class="btn btn-light">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,72 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.GiaSu
+@{
+    ViewData["Title"] = "Chi tiết gia sư";
+    var laAdmin = Context.Session.GetString("VaiTro") == "Admin";
+    var vaiTro = Context.Session.GetString("VaiTro");
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Chi tiết gia sư</h1>
+    </div>
+    <div class="d-flex gap-2">
+        
+        @if (laAdmin)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.MaGiaSu" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Sửa</a>
+        }
+        <a asp-action="Index" class="btn btn-light">Quay lại</a>
+    </div>
+</div>
+<div class="card form-card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Họ tên</dt>
+            <dd class="col-sm-9">@(Model.HoTen)</dd>
+            <dt class="col-sm-3">Ngày sinh</dt>
+            <dd class="col-sm-9">@(Model.NgaySinh.ToString("dd/MM/yyyy"))</dd>
+            <dt class="col-sm-3">Giới tính</dt>
+            <dd class="col-sm-9">@(Model.GioiTinh)</dd>
+            <dt class="col-sm-3">Điện thoại</dt>
+            <dd class="col-sm-9">@(Model.SoDienThoai)</dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@(Model.Email)</dd>
+            <dt class="col-sm-3">Địa chỉ</dt>
+            <dd class="col-sm-9">@(Model.DiaChi)</dd>
+            <dt class="col-sm-3">Trình độ</dt>
+            <dd class="col-sm-9">@(Model.TrinhDo)</dd>
+            <dt class="col-sm-3">Kinh nghiệm</dt>
+            <dd class="col-sm-9">@(Model.SoNamKinhNghiem + " năm")</dd>
+            <dt class="col-sm-3">Giới thiệu</dt>
+            <dd class="col-sm-9">@(Model.GioiThieu)</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
+        </dl>
+    </div>
+</div>
+<div class="card form-card">
+    <div class="card-header fw-bold"><i class="bi bi-mortarboard me-2"></i>Chuyên môn</div>
+    @if (Model.ChuyenMons.Any())
+    {
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead><tr><th>Môn học</th><th>Trình độ</th><th>Kinh nghiệm</th><th>Trạng thái</th></tr></thead>
+                <tbody>
+                @foreach (var c in Model.ChuyenMons)
+                {
+                    <tr>
+                        <td>@(c.MonHoc?.TenMonHoc)</td>
+                        <td>@c.TrinhDoChuyenMon</td>
+                        <td>@c.SoNamKinhNghiemMon năm</td>
+                        <td><partial name="_TrangThaiBadge" model="c.TrangThai" /></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state"><i class="bi bi-inbox"></i>Gia sư chưa có chuyên môn nào.</div>
+    }
+</div>

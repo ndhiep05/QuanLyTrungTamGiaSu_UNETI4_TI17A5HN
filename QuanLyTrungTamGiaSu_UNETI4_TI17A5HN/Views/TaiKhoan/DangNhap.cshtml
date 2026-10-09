@@ -1,0 +1,34 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model DangNhapViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "_LayoutDangNhap";
+}
+<div class="card auth-card">
+    <div class="auth-logo"><i class="bi bi-mortarboard-fill"></i></div>
+    <h4 class="text-center fw-bold mb-1">Đăng nhập hệ thống</h4>
+    <p class="text-center text-muted mb-4">Trung tâm gia sư</p>
+
+    <form asp-action="DangNhap" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
+        <div class="mb-3">
+            <label asp-for="TenDangNhap" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-person"></i></span>
+                <input asp-for="TenDangNhap" class="form-control" autofocus />
+            </div>
+            <span asp-validation-for="TenDangNhap" class="text-danger"></span>
+        </div>
+        <div class="mb-4">
+            <label asp-for="MatKhau" class="form-label"></label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                <input asp-for="MatKhau" class="form-control" />
+            </div>
+            <span asp-validation-for="MatKhau" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary w-100 py-2">Đăng nhập</button>
+    </form>
+    <div class="text-center mt-3"><a asp-controller="Home" asp-action="Index">&larr; Về trang chủ</a></div>
+</div>
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

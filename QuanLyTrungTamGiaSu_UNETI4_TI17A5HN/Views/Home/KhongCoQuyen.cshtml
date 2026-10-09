@@ -1,0 +1,12 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@{
+    ViewData["Title"] = "Không có quyền truy cập";
+}
+<div class="card form-card mx-auto">
+    <div class="card-body empty-state">
+        <i class="bi bi-shield-lock"></i>
+        <h4 class="fw-bold">Bạn không có quyền truy cập chức năng này</h4>
+        <p>Vui lòng đăng nhập bằng tài khoản có quyền phù hợp hoặc quay về trang chủ.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Về trang chủ</a>
+    </div>
+</div>

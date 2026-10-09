@@ -1,0 +1,96 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model IEnumerable<QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.LopHoc>
+@{
+    ViewData["Title"] = "Lớp học";
+    var vaiTro = Context.Session.GetString("VaiTro");
+    var laAdmin = vaiTro == "Admin";
+    var pt = ViewBag.PhanTrang as PhanTrangViewModel;
+}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Lớp học</h1>
+        <p class="page-sub">Danh sách lớp học</p>
+    </div>
+    @if (laAdmin)
+    {
+        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm mới</a>
+    }
+</div>
+
+<div class="card card-table">
+    <div class="card-header">
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên lớp hoặc môn học..." />
+                </div>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+                <a asp-action="Index" class="btn btn-light">Đặt lại</a>
+            </div>
+        </form>
+    </div>
+    @if (!Model.Any())
+    {
+        <div class="empty-state"><i class="bi bi-inbox"></i>Không có dữ liệu phù hợp.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>Tên lớp</th>
+                        <th>Môn học</th>
+                        <th>Trình độ</th>
+                        <th>Thời gian</th>
+                        <th>Sĩ số tối đa</th>
+                        <th>Học phí</th>
+                        <th>Trạng thái</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(item.TenLop)</td>
+                        <td>@(item.MonHoc?.TenMonHoc)</td>
+                        <td>@(item.TrinhDoLop)</td>
+                        <td>@(item.NgayBatDau.ToString("dd/MM/yyyy") + " – " + item.NgayKetThuc.ToString("dd/MM/yyyy"))</td>
+                        <td>@(item.SiSoToiDa)</td>
+                        <td>@(item.HocPhi.ToString("N0")) ₫</td>
+                        <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>
+                        <td class="text-end text-nowrap">
+                            <a asp-action="Details" asp-route-id="@item.MaLop" class="btn btn-sm btn-outline-secondary" title="Chi tiết"><i class="bi bi-eye"></i></a>
+
+                @if (vaiTro == "HocVien" && item.TrangThai == TrangThaiLop.DangMoDangKy)
+                {
+                    <form asp-controller="DangKyLop" asp-action="DangKy" method="post" class="d-inline">
+                        <input type="hidden" name="maLop" value="@item.MaLop" />
+                        <button type="submit" class="btn btn-sm btn-success">Đăng ký</button>
+                    </form>
+                }
+                else if (vaiTro == "HocVien" && item.TrangThai == TrangThaiLop.DaDu)
+                {
+                    <span class="text-muted small me-1">Đã đủ chỗ</span>
+                }
+                            @if (laAdmin)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.MaLop" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.MaLop" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (pt != null && pt.TotalItems > 0)
+    {
+        <div class="card-footer"><partial name="_PhanTrang" model="pt" /></div>
+    }
+</div>
