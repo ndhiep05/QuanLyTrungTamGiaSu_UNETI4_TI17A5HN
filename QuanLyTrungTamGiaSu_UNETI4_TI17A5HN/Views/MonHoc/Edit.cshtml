@@ -1,0 +1,33 @@
+@* Họ và tên: <Nguyen Dinh Hiep> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.MonHoc
+
+@{
+    ViewData["Title"] = "Sửa môn học";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Sửa môn học</h1>
+        <p class="page-sub">Cập nhật thông tin và bấm Lưu thay đổi</p>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-controller="MonHoc" asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly"
+                 class="alert alert-danger"></div>
+
+            <input type="hidden" asp-for="MaMonHoc" />
+
+            <partial name="_Form" model="Model" />
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

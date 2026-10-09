@@ -1,0 +1,63 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Form dùng chung cho Thêm/Sửa *@
+
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.MonHoc
+
+<div asp-validation-summary="ModelOnly"
+     class="text-danger mb-3">
+</div>
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="TenMonHoc" class="form-label"></label>
+        <input asp-for="TenMonHoc"
+               class="form-control"
+               placeholder="Nhập tên môn học" />
+        <span asp-validation-for="TenMonHoc"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="CapDo" class="form-label"></label>
+        <select asp-for="CapDo" class="form-select">
+            <option value="">-- Chọn cấp độ --</option>
+            <option value="Cơ bản">Cơ bản</option>
+            <option value="Trung bình">Trung bình</option>
+            <option value="Nâng cao">Nâng cao</option>
+        </select>
+        <span asp-validation-for="CapDo"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="MoTa" class="form-label"></label>
+        <textarea asp-for="MoTa"
+                  class="form-control"
+                  rows="3"
+                  placeholder="Nhập mô tả môn học"></textarea>
+        <span asp-validation-for="MoTa"
+              class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="TrangThai" class="form-label"></label>
+        <select asp-for="TrangThai" class="form-select">
+            <option value="">-- Chọn trạng thái --</option>
+            <option value="Hoạt động">Hoạt động</option>
+            <option value="Khóa">Khóa</option>
+        </select>
+        <span asp-validation-for="TrangThai"
+              class="text-danger"></span>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-save me-1"></i> Lưu
+    </button>
+
+    <a asp-controller="MonHoc"
+       asp-action="Index"
+       class="btn btn-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Quay lại
+    </a>
+</div>

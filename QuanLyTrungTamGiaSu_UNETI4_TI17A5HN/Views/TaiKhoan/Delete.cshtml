@@ -1,0 +1,56 @@
+
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.TaiKhoan
+
+@{
+    ViewData["Title"] = "Xóa tài khoản";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Xác nhận xóa tài khoản</h1>
+        <p class="page-sub">Kiểm tra thông tin trước khi xác nhận</p>
+    </div>
+</div>
+
+
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show"
+         role="alert">
+        @TempData["ThongBao"]
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Đóng"></button>
+    </div>
+}
+<div class="card p-4">
+    <p>Bạn có chắc chắn muốn xóa tài khoản này không?</p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Tên đăng nhập</dt>
+        <dd class="col-sm-9">@Model.TenDangNhap</dd>
+
+        <dt class="col-sm-3">Họ tên</dt>
+        <dd class="col-sm-9">@Model.HoTen</dd>
+
+        <dt class="col-sm-3">Email</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Vai trò</dt>
+        <dd class="col-sm-9">@Model.VaiTro</dd>
+    </dl>
+
+    <form asp-action="Delete" asp-route-id="@Model.MaTaiKhoan"
+          method="post">
+        @Html.AntiForgeryToken()
+
+        <button type="submit" class="btn btn-danger">
+            Xác nhận xóa
+        </button>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Hủy
+        </a>
+    </form>
+</div>

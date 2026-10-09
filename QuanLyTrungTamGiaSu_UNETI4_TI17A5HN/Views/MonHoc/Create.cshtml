@@ -1,0 +1,18 @@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.MonHoc
+
+@{
+    ViewData["Title"] = "Thêm môn học";
+}
+
+<h2>Thêm môn học</h2>
+
+<form asp-controller="MonHoc" asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <partial name="_Form" model="Model" />
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
