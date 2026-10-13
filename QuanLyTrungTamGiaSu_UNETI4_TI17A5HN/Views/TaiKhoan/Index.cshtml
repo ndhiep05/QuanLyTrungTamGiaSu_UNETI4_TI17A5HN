@@ -1,4 +1,4 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@* Họ và tên: <Nguyễn Đình Hiệp> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
 @model IEnumerable<QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.TaiKhoan>
 @{
     ViewData["Title"] = "Tài khoản";
@@ -77,3 +77,15 @@
         <div class="card-footer"><partial name="_PhanTrang" model="pt" /></div>
     }
 </div>
+
+@if (TempData["ThongBao"] != null)
+{
+    <div class="alert alert-info alert-dismissible fade show"
+         role="alert">
+        @TempData["ThongBao"]
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Đóng"></button>
+    </div>
+}
