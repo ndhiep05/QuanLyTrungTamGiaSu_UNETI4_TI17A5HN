@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
@@ -18,15 +18,18 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         }
 
         [HttpGet]
-        public IActionResult DangNhap()
+        public IActionResult DangNhap(string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View(new DangNhapViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DangNhap(DangNhapViewModel model)
+        public async Task<IActionResult> DangNhap(DangNhapViewModel model, string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
+
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -45,14 +48,15 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 
                 return View(model);
             }
-            Console.WriteLine(
-             $"TrangThai=[{taiKhoan.TrangThai}], " +
-             $"VaiTro=[{taiKhoan.VaiTro}]");
-            if (taiKhoan.TrangThai.Trim() != "HoatDong")
+
+            // Kiểm tra trạng thái tài khoản (hỗ trợ cả HoatDong và Hoạt động)
+            var trangThai = taiKhoan.TrangThai?.Trim() ?? "";
+            if (!trangThai.Equals("HoatDong", StringComparison.OrdinalIgnoreCase) &&
+                !trangThai.Equals(TrangThaiChung.HoatDong, StringComparison.OrdinalIgnoreCase))
             {
                 ModelState.AddModelError(
                     string.Empty,
-                    "Tài khoản hiện không hoạt động.");
+                    "Tài khoản hiện đang bị khóa hoặc đã ngưng hoạt động.");
 
                 return View(model);
             }
@@ -60,6 +64,12 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             HttpContext.Session.SetString("VaiTro", taiKhoan.VaiTro);
             HttpContext.Session.SetString("HoTen", taiKhoan.HoTen);
             HttpContext.Session.SetInt32("MaTaiKhoan", taiKhoan.MaTaiKhoan);
+            HttpContext.Session.SetString("TenDangNhap", taiKhoan.TenDangNhap);
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
 
             return RedirectToAction("Index", "Home");
         }
@@ -68,8 +78,20 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         public IActionResult DangXuat()
         {
             HttpContext.Session.Clear();
-
             return RedirectToAction("Index", "Home");
+        }
+
+        // Action chuyển tiếp hỗ trợ tương thích nếu có link gọi Login hoặc AccessDenied
+        [HttpGet]
+        public IActionResult Login(string? returnUrl = null)
+        {
+            return RedirectToAction(nameof(DangNhap), new { returnUrl });
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return RedirectToAction("KhongCoQuyen", "Home");
         }
 
 

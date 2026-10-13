@@ -2,6 +2,9 @@
 @model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.MonHoc
 @{
     ViewData["Title"] = "Xóa môn học";
+    bool coLienQuan = ViewBag.CoLienQuan == true;
+    int soGiaSu = ViewBag.SoGiaSu ?? 0;
+    int soLopHoc = ViewBag.SoLopHoc ?? 0;
 }
 <div class="page-header">
     <div>
@@ -11,7 +14,25 @@
 </div>
 <div class="card form-card">
     <div class="card-body">
-        <div class="alert alert-warning"><i class="bi bi-exclamation-triangle me-1"></i> Bạn có chắc chắn muốn xóa môn học này không?</div>
+        @if (coLienQuan)
+        {
+            <div class="alert alert-danger">
+                <i class="bi bi-shield-exclamation me-1"></i>
+                <strong>Không thể xóa môn học này!</strong>
+                Hiện có
+                @(soGiaSu > 0 ? $"{soGiaSu} gia sư phụ trách chuyên môn" : "")
+                @(soGiaSu > 0 && soLopHoc > 0 ? " và " : "")
+                @(soLopHoc > 0 ? $"{soLopHoc} lớp học liên kết" : "")
+                đang sử dụng môn học này. Vui lòng chuyển trạng thái môn học sang <strong>Khóa</strong> thay vì xóa.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-1"></i> Bạn có chắc chắn muốn xóa môn học này không?
+            </div>
+        }
+
         <dl class="row mb-0">
             <dt class="col-sm-3">Tên môn học</dt>
             <dd class="col-sm-9">@(Model.TenMonHoc)</dd>
@@ -22,11 +43,19 @@
             <dt class="col-sm-3">Trạng thái</dt>
             <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
         </dl>
-        <form asp-action="Delete" method="post">
+        <form asp-action="Delete" method="post" class="mt-3">
             <input type="hidden" asp-for="MaMonHoc" />
             <div class="form-actions">
-                <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa</button>
-                <a asp-action="Index" class="btn btn-light">Hủy</a>
+                @if (!coLienQuan)
+                {
+                    <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa</button>
+                    <a asp-action="Index" class="btn btn-light">Hủy</a>
+                }
+                else
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.MaMonHoc" class="btn btn-warning"><i class="bi bi-pencil me-1"></i> Chuyển sang Khóa</a>
+                    <a asp-action="Index" class="btn btn-light">Quay lại danh sách</a>
+                }
             </div>
         </form>
     </div>

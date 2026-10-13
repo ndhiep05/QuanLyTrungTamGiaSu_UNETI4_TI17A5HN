@@ -1,44 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models;
 
 namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Filters
 {
-    public class AdminOnlyAttribute : ActionFilterAttribute
+    /// <summary>
+    /// Bộ lọc chỉ cho phép Quản trị viên (Admin) truy cập.
+    /// Kế thừa từ bộ lọc phân quyền dùng chung PhanQuyenAttribute.
+    /// </summary>
+    public class AdminOnlyAttribute : PhanQuyenAttribute
     {
-        public override void OnActionExecuting(
-            ActionExecutingContext context)
+        public AdminOnlyAttribute() : base(VaiTro.Admin)
         {
-            // Kiểm tra người dùng đã đăng nhập chưa
-            var maTaiKhoan = context.HttpContext.Session
-                .GetString("MaTaiKhoan");
-
-            var vaiTro = context.HttpContext.Session
-                .GetString("VaiTro");
-
-            if (string.IsNullOrEmpty(maTaiKhoan))
-            {
-                context.Result = new RedirectToActionResult(
-                    "Login",
-                    "TaiKhoan",
-                    null
-                );
-
-                return;
-            }
-
-            // Chỉ cho phép tài khoản Admin truy cập
-            if (vaiTro != "Admin")
-            {
-                context.Result = new RedirectToActionResult(
-                    "AccessDenied",
-                    "TaiKhoan",
-                    null
-                );
-
-                return;
-            }
-
-            base.OnActionExecuting(context);
         }
     }
 }
