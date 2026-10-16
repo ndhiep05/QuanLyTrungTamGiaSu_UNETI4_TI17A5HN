@@ -11,7 +11,7 @@
 </div>
 <div class="card form-card">
     <div class="card-body">
-        <form asp-action="Edit" method="post">
+        <form asp-action="Edit" asp-route-id="@Model.MaGiaSu" method="post">
             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <input type="hidden" asp-for="MaGiaSu" />
             <partial name="_Form" model="Model" />

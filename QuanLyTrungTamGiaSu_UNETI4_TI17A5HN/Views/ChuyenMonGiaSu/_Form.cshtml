@@ -1,34 +1,19 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@* Form dùng chung cho thêm và sửa chuyên môn gia sư. *@
 @model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.ChuyenMonGiaSu
 <div class="row g-3">
-        <div class="col-md-6">
-            <label asp-for="MaGiaSu" class="form-label"></label>
-            <select asp-for="MaGiaSu" asp-items="ViewBag.GiaSuList" class="form-select"><option value="">-- Chọn gia sư --</option></select>
-            <span asp-validation-for="MaGiaSu" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="MaMonHoc" class="form-label"></label>
-            <select asp-for="MaMonHoc" asp-items="ViewBag.MonHocList" class="form-select"><option value="">-- Chọn môn học --</option></select>
-            <span asp-validation-for="MaMonHoc" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="TrinhDoChuyenMon" class="form-label"></label>
-            <select asp-for="TrinhDoChuyenMon" class="form-select"><option value="">-- Chọn --</option><option>Cơ bản</option><option>Trung bình</option><option>Nâng cao</option></select>
-            <span asp-validation-for="TrinhDoChuyenMon" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="SoNamKinhNghiemMon" class="form-label"></label>
-            <input asp-for="SoNamKinhNghiemMon" class="form-control" min="0" />
-            <span asp-validation-for="SoNamKinhNghiemMon" class="text-danger"></span>
-        </div>
-        <div class="col-12">
-            <label asp-for="GhiChu" class="form-label"></label>
-            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="GhiChu" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="TrangThai" class="form-label"></label>
-            <select asp-for="TrangThai" class="form-select"><option value="">-- Chọn --</option><option>Hoạt động</option><option>Khóa</option></select>
-            <span asp-validation-for="TrangThai" class="text-danger"></span>
-        </div>
+    <div class="col-md-6">
+        <label asp-for="MaGiaSu" class="form-label">Gia sư</label>
+        <select asp-for="MaGiaSu" asp-items="ViewBag.GiaSuList" class="form-select"><option value="">-- Chọn gia sư --</option></select>
+        <span asp-validation-for="MaGiaSu" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="MaMonHoc" class="form-label">Môn học</label>
+        <select asp-for="MaMonHoc" asp-items="ViewBag.MonHocList" class="form-select"><option value="">-- Chọn môn học --</option></select>
+        <span asp-validation-for="MaMonHoc" class="text-danger"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="TrangThai" class="form-label"></label>
+        <select asp-for="TrangThai" class="form-select"><option>Hoạt động</option><option>Khóa</option></select>
+        <span asp-validation-for="TrangThai" class="text-danger"></span>
+    </div>
 </div>

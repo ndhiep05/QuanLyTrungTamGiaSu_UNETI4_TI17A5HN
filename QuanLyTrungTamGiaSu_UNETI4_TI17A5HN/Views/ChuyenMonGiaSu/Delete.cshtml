@@ -17,15 +17,11 @@
             <dd class="col-sm-9">@(Model.GiaSu?.HoTen)</dd>
             <dt class="col-sm-3">Môn học</dt>
             <dd class="col-sm-9">@(Model.MonHoc?.TenMonHoc)</dd>
-            <dt class="col-sm-3">Trình độ</dt>
-            <dd class="col-sm-9">@(Model.TrinhDoChuyenMon)</dd>
-            <dt class="col-sm-3">Kinh nghiệm</dt>
-            <dd class="col-sm-9">@(Model.SoNamKinhNghiemMon + " năm")</dd>
             <dt class="col-sm-3">Trạng thái</dt>
             <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
         </dl>
         <form asp-action="Delete" method="post">
-            <input type="hidden" asp-for="MaChuyenMon" />
+            <input type="hidden" name="id" value="@Model.ChuyenMonGiaSuId" />
             <div class="form-actions">
                 <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa</button>
                 <a asp-action="Index" class="btn btn-light">Hủy</a>

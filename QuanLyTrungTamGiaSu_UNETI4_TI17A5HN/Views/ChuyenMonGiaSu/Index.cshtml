@@ -44,8 +44,6 @@
                     <tr>
                         <th>Gia sư</th>
                         <th>Môn học</th>
-                        <th>Trình độ</th>
-                        <th>Kinh nghiệm</th>
                         <th>Trạng thái</th>
                         <th></th>
                     </tr>
@@ -56,14 +54,12 @@
                     <tr>
                         <td>@(item.GiaSu?.HoTen)</td>
                         <td>@(item.MonHoc?.TenMonHoc)</td>
-                        <td>@(item.TrinhDoChuyenMon)</td>
-                        <td>@(item.SoNamKinhNghiemMon + " năm")</td>
                         <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>
                         <td class="text-end text-nowrap">
                             @if (laAdmin)
                             {
-                                <a asp-action="Edit" asp-route-id="@item.MaChuyenMon" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
-                                <a asp-action="Delete" asp-route-id="@item.MaChuyenMon" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></a>
+                                <a asp-action="Edit" asp-route-id="@item.ChuyenMonGiaSuId" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>
+                                <a asp-action="Delete" asp-route-id="@item.ChuyenMonGiaSuId" class="btn btn-sm btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></a>
                             }
                         </td>
                     </tr>
