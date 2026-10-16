@@ -23,10 +23,6 @@
         <dl class="row mb-0">
             <dt class="col-sm-3">Họ tên</dt>
             <dd class="col-sm-9">@(Model.HoTen)</dd>
-            <dt class="col-sm-3">Ngày sinh</dt>
-            <dd class="col-sm-9">@(Model.NgaySinh.ToString("dd/MM/yyyy"))</dd>
-            <dt class="col-sm-3">Giới tính</dt>
-            <dd class="col-sm-9">@(Model.GioiTinh)</dd>
             <dt class="col-sm-3">Điện thoại</dt>
             <dd class="col-sm-9">@(Model.SoDienThoai)</dd>
             <dt class="col-sm-3">Email</dt>
@@ -36,9 +32,7 @@
             <dt class="col-sm-3">Trình độ</dt>
             <dd class="col-sm-9">@(Model.TrinhDo)</dd>
             <dt class="col-sm-3">Kinh nghiệm</dt>
-            <dd class="col-sm-9">@(Model.SoNamKinhNghiem + " năm")</dd>
-            <dt class="col-sm-3">Giới thiệu</dt>
-            <dd class="col-sm-9">@(Model.GioiThieu)</dd>
+            <dd class="col-sm-9">@(Model.KinhNghiem + " năm")</dd>
             <dt class="col-sm-3">Trạng thái</dt>
             <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
         </dl>
@@ -50,14 +44,12 @@
     {
         <div class="table-responsive">
             <table class="table align-middle mb-0">
-                <thead><tr><th>Môn học</th><th>Trình độ</th><th>Kinh nghiệm</th><th>Trạng thái</th></tr></thead>
+                <thead><tr><th>Môn học</th><th>Trạng thái</th></tr></thead>
                 <tbody>
                 @foreach (var c in Model.ChuyenMons)
                 {
                     <tr>
                         <td>@(c.MonHoc?.TenMonHoc)</td>
-                        <td>@c.TrinhDoChuyenMon</td>
-                        <td>@c.SoNamKinhNghiemMon năm</td>
                         <td><partial name="_TrangThaiBadge" model="c.TrangThai" /></td>
                     </tr>
                 }

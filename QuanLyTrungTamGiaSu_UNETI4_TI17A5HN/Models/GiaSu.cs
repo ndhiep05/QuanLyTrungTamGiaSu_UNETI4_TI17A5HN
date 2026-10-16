@@ -8,7 +8,10 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models
     public class GiaSu
     {
         [Key]
-        public int GiaSuId { get; set; }
+        public int MaGiaSu { get; set; }
+
+        public int? MaTaiKhoan { get; set; }
+        public TaiKhoan? TaiKhoan { get; set; }
 
         [Required(ErrorMessage = "Vui lòng nhập họ tên gia sư")]
         [StringLength(100)]
@@ -37,5 +40,11 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models
         // Danh sách chuyên môn của gia sư
         public ICollection<ChuyenMonGiaSu> ChuyenMons { get; set; }
             = new List<ChuyenMonGiaSu>();
+
+        // Lịch sử phân công và lịch dạy của gia sư
+        public ICollection<PhanCongGiaSu> PhanCongs { get; set; }
+            = new List<PhanCongGiaSu>();
+        public ICollection<LichHoc> LichHocs { get; set; }
+            = new List<LichHoc>();
     }
 }

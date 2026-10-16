@@ -1,0 +1,32 @@
+@* Nguyễn Đức Hùng | 23103100212 | Xem chi tiết chuyên môn gia sư (SV2) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.ChuyenMonGiaSu
+
+@{
+    ViewData["Title"] = "Chi tiết chuyên môn gia sư";
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Chi tiết chuyên môn gia sư</h1>
+        <p class="page-sub">Thông tin môn học mà gia sư đảm nhiệm</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.ChuyenMonGiaSuId" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i> Sửa
+        </a>
+        <a asp-action="Index" class="btn btn-light">Quay lại</a>
+    </div>
+</div>
+
+<div class="card form-card">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Gia sư</dt>
+            <dd class="col-sm-9">@(Model.GiaSu?.HoTen ?? "Không xác định")</dd>
+            <dt class="col-sm-3">Môn học</dt>
+            <dd class="col-sm-9">@(Model.MonHoc?.TenMonHoc ?? "Không xác định")</dd>
+            <dt class="col-sm-3">Trạng thái</dt>
+            <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
+        </dl>
+    </div>
+</div>

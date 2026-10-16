@@ -34,7 +34,7 @@
             </div>
             <div class="col-md-4 col-xl-2">
                 <label class="form-label small mb-1">Môn học</label>
-                <select name="maMonHoc" asp-items="ViewBag.MonHocList" class="form-select"><option value="">Tất cả</option></select>
+                <select name="monHocId" asp-items="ViewBag.MonHocList" class="form-select"><option value="">Tất cả</option></select>
             </div>
             <div class="col-md-4 col-xl-2">
                 <label class="form-label small mb-1">Trình độ</label>
@@ -85,7 +85,7 @@
                         <td><a asp-action="Details" asp-route-id="@item.MaGiaSu" class="fw-semibold">@item.HoTen</a></td>
                         <td>@item.SoDienThoai<br /><small class="text-muted">@item.Email</small></td>
                         <td>@item.TrinhDo</td>
-                        <td>@item.SoNamKinhNghiem năm</td>
+                        <td>@item.KinhNghiem năm</td>
                         <td>
                             @foreach (var c in item.ChuyenMons.Where(c => c.MonHoc != null))
                             {
