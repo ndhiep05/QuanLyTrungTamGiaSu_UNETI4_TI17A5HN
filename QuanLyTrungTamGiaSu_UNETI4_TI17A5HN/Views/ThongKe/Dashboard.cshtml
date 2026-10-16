@@ -1,50 +1,62 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@* Họ và tên: Nguyễn Đình Hiệp | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện Dashboard 10 chỉ số (MODULE 5 - SV1) *@
 @model DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
-    var cards = new (string Nhan, string GiaTri, string Icon, string Mau)[]
+    var cards = new (string Nhan, string GiaTri, string Icon, string Mau, string MoTa)[]
     {
-        ("Tổng số môn học", Model.TongMonHoc.ToString("N0"), "bi-journal-bookmark", "stat-indigo"),
-        ("Gia sư đang hoạt động", Model.GiaSuHoatDong.ToString("N0"), "bi-person-workspace", "stat-green"),
-        ("Tổng số học viên", Model.TongHocVien.ToString("N0"), "bi-people", "stat-blue"),
-        ("Lớp đang mở đăng ký", Model.LopDangMoDangKy.ToString("N0"), "bi-door-open", "stat-teal"),
-        ("Lớp đang học", Model.LopDangHoc.ToString("N0"), "bi-easel", "stat-indigo"),
-        ("Đăng ký chờ xác nhận", Model.DangKyChoXacNhan.ToString("N0"), "bi-hourglass-split", "stat-amber"),
-        ("Lớp đã đủ sĩ số", Model.LopDaDuSiSo.ToString("N0"), "bi-people-fill", "stat-rose"),
-        ("Buổi học sắp tới", Model.BuoiHocSapToi.ToString("N0"), "bi-calendar-event", "stat-blue"),
-        ("Học phí đã thu trong kỳ", Model.TongHocPhiDaThu.ToString("N0") + " ₫", "bi-cash-stack", "stat-green"),
-        ("Đăng ký còn thiếu học phí", Model.DangKyConThieuHocPhi.ToString("N0"), "bi-exclamation-circle", "stat-rose")
+        ("Tổng số môn học", Model.TongMonHoc.ToString("N0"), "bi-journal-bookmark", "stat-indigo", "Môn học đang quản lý"),
+        ("Gia sư đang hoạt động", Model.GiaSuHoatDong.ToString("N0"), "bi-person-workspace", "stat-green", "Gia sư sẳn sàng nhận lớp"),
+        ("Tổng số học viên", Model.TongHocVien.ToString("N0"), "bi-people", "stat-blue", "Học viên đăng ký học"),
+        ("Lớp đang mở đăng ký", Model.LopDangMoDangKy.ToString("N0"), "bi-door-open", "stat-teal", "Lớp đang nhận đăng ký mới"),
+        ("Lớp đang học", Model.LopDangHoc.ToString("N0"), "bi-easel", "stat-indigo", "Lớp học đang triển khai"),
+        ("Đăng ký chờ xác nhận", Model.DangKyChoXacNhan.ToString("N0"), "bi-hourglass-split", "stat-amber", "Yêu cầu chờ Admin duyệt"),
+        ("Lớp đã đủ sĩ số", Model.LopDaDuSiSo.ToString("N0"), "bi-people-fill", "stat-rose", "Lớp học đã lấp đầy sĩ số"),
+        ("Buổi học sắp tới", Model.BuoiHocSapToi.ToString("N0"), "bi-calendar-event", "stat-blue", "Lịch học đã lên lịch từ hôm nay"),
+        ("Học phí đã thu trong kỳ", Model.TongHocPhiDaThu.ToString("N0") + " ₫", "bi-cash-stack", "stat-green", "Tổng doanh thu đã ghi nhận"),
+        ("Đăng ký còn thiếu học phí", Model.DangKyConThieuHocPhi.ToString("N0"), "bi-exclamation-circle", "stat-rose", "Đăng ký chưa hoàn thành học phí")
     };
 }
-<div class="page-header">
+<div class="page-header d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
     <div>
-        <h1 class="page-title">Dashboard</h1>
-        <p class="page-sub">Tổng quan hoạt động của trung tâm</p>
+        <h1 class="page-title"><i class="bi bi-speedometer2 text-primary me-2"></i>Dashboard</h1>
+        <p class="page-sub mb-0">Báo cáo 10 chỉ số hoạt động chính của trung tâm gia sư</p>
     </div>
-    <form method="get" class="d-flex flex-wrap gap-2 align-items-end">
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-end card p-2 shadow-sm border-0 bg-light">
         <div>
-            <label class="form-label small mb-1" for="tuNgay">Từ ngày</label>
+            <label class="form-label small mb-1 fw-semibold" for="tuNgay">Từ ngày</label>
             <input type="date" id="tuNgay" name="tuNgay" class="form-control form-control-sm" value="@Model.TuNgay?.ToString("yyyy-MM-dd")" />
         </div>
         <div>
-            <label class="form-label small mb-1" for="denNgay">Đến ngày</label>
+            <label class="form-label small mb-1 fw-semibold" for="denNgay">Đến ngày</label>
             <input type="date" id="denNgay" name="denNgay" class="form-control form-control-sm" value="@Model.DenNgay?.ToString("yyyy-MM-dd")" />
         </div>
-        <button type="submit" class="btn btn-primary btn-sm">Xem</button>
+        <button type="submit" class="btn btn-primary btn-sm px-3"><i class="bi bi-filter me-1"></i>Lọc dữ liệu</button>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-counterclockwise"></i></a>
     </form>
 </div>
 
-<div class="row g-3">
+<div class="row g-3 mb-4">
     @foreach (var c in cards)
     {
-        <div class="col-sm-6 col-xl-4">
-            <div class="card stat-card">
+        <div class="col-sm-6 col-xl-4 col-xxl-3">
+            <div class="card stat-card h-100 shadow-sm hover-shadow transition">
                 <div class="stat-icon @c.Mau"><i class="bi @c.Icon"></i></div>
-                <div>
-                    <div class="stat-value">@c.GiaTri</div>
-                    <div class="stat-label">@c.Nhan</div>
+                <div class="flex-grow-1">
+                    <div class="stat-value text-dark fw-bold mb-0 fs-4">@c.GiaTri</div>
+                    <div class="stat-label fw-semibold text-body">@c.Nhan</div>
+                    <small class="text-muted fs-7">@c.MoTa</small>
                 </div>
             </div>
         </div>
     }
+</div>
+
+<div class="alert alert-light border shadow-sm">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-lightbulb-fill fs-3 text-warning me-3"></i>
+        <div>
+            <h6 class="fw-bold mb-1">Ghi chú nghiệp vụ Dashboard (Mục 9.5):</h6>
+            <p class="mb-0 small text-muted">Bảng điều khiển hiển thị 10 chỉ số tổng quan được truy vấn trực tiếp từ CSDL theo thời gian thực. Tổng học phí đã thu hỗ trợ lọc linh hoạt theo khoảng thời gian được chọn.</p>
+        </div>
+    </div>
 </div>

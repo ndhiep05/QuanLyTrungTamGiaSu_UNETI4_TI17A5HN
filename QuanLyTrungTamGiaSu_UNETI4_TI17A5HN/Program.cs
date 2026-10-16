@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
+
 
 using Microsoft.EntityFrameworkCore;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
@@ -6,6 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // MVC
 builder.Services.AddControllersWithViews();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 // SQL Server + Entity Framework Core
 builder.Services.AddDbContext<AppDbContext>(options =>
