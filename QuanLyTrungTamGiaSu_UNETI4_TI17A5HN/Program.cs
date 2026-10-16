@@ -1,29 +1,55 @@
+using Microsoft.EntityFrameworkCore;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
+
+
+using Microsoft.EntityFrameworkCore;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// MVC
 builder.Services.AddControllersWithViews();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// SQL Server + Entity Framework Core
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Session
 builder.Services.AddDistributedMemoryCache();
-builder.Services.AddSession();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy =
+        CookieSecurePolicy.Always;
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Error handling
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
-
-app.UseSession();
-
 app.UseRouting();
 
+// Session must be available before Controllers use it
+app.UseSession();
+
+// Authorization
 app.UseAuthorization();
 
+// Static assets
 app.MapStaticAssets();
 
 app.MapControllerRoute(

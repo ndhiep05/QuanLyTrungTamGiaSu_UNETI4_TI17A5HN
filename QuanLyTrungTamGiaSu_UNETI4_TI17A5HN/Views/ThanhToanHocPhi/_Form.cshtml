@@ -1,24 +1,39 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form dùng chung cho Thêm/Sửa *@
+@* Họ và tên: Nguyễn Đình Hiệp | Mã sinh viên: 23103100230 | Nội dung thực hiện: Form thanh toán học phí (SV1) *@
 @model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.ThanhToanHocPhi
+
+<div class="alert alert-info py-2">
+    <i class="bi bi-info-circle me-1"></i> <strong>Quy tắc học phí (Mục 9.2):</strong> Số tiền thanh toán mới phải <code>&gt; 0</code> và <code>&le; Số tiền còn lại</code> của lượt đăng ký lớp học.
+</div>
+
 <div class="row g-3">
-        <div class="col-md-6">
-            <label asp-for="MaDangKy" class="form-label"></label>
-            <select asp-for="MaDangKy" asp-items="ViewBag.DangKyList" class="form-select"><option value="">-- Chọn đăng ký --</option></select>
-            <span asp-validation-for="MaDangKy" class="text-danger"></span>
+    <div class="col-md-6">
+        <label asp-for="MaDangKy" class="form-label fw-semibold"></label>
+        <select asp-for="MaDangKy" asp-items="ViewBag.DangKyList" class="form-select">
+            <option value="">-- Chọn học viên &amp; lớp học đăng ký --</option>
+        </select>
+        <span asp-validation-for="MaDangKy" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="SoTien" class="form-label fw-semibold"></label>
+        <div class="input-group">
+            <input asp-for="SoTien" class="form-control" type="number" min="1" step="50000" placeholder="Nhập số tiền thu..." />
+            <span class="input-group-text">₫</span>
         </div>
-        <div class="col-md-6">
-            <label asp-for="SoTien" class="form-label"></label>
-            <input asp-for="SoTien" class="form-control" type="number" min="1" step="any" />
-            <span asp-validation-for="SoTien" class="text-danger"></span>
-        </div>
-        <div class="col-md-6">
-            <label asp-for="PhuongThuc" class="form-label"></label>
-            <select asp-for="PhuongThuc" class="form-select"><option value="">-- Chọn --</option><option>Tiền mặt</option><option>Chuyển khoản</option><option>Thẻ</option></select>
-            <span asp-validation-for="PhuongThuc" class="text-danger"></span>
-        </div>
-        <div class="col-12">
-            <label asp-for="GhiChu" class="form-label"></label>
-            <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
-            <span asp-validation-for="GhiChu" class="text-danger"></span>
-        </div>
+        <span asp-validation-for="SoTien" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6">
+        <label asp-for="PhuongThuc" class="form-label fw-semibold"></label>
+        <select asp-for="PhuongThuc" class="form-select">
+            <option value="Tiền mặt">Tiền mặt</option>
+            <option value="Chuyển khoản">Chuyển khoản</option>
+            <option value="Thẻ ngân hàng">Thẻ ngân hàng</option>
+            <option value="Ví điện tử">Ví điện tử</option>
+        </select>
+        <span asp-validation-for="PhuongThuc" class="text-danger small"></span>
+    </div>
+    <div class="col-12">
+        <label asp-for="GhiChu" class="form-label fw-semibold"></label>
+        <textarea asp-for="GhiChu" class="form-control" rows="3" placeholder="Ghi chú thanh toán (nếu có)..."></textarea>
+        <span asp-validation-for="GhiChu" class="text-danger small"></span>
+    </div>
 </div>

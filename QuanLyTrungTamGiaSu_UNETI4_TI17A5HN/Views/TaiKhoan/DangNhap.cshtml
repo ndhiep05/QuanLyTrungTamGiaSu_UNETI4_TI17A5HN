@@ -9,7 +9,8 @@
     <h4 class="text-center fw-bold mb-1">Đăng nhập hệ thống</h4>
     <p class="text-center text-muted mb-4">Trung tâm gia sư</p>
 
-    <form asp-action="DangNhap" method="post">
+    <form asp-controller="TaiKhoan" asp-action="DangNhap" method="post">
+        @Html.AntiForgeryToken()
         <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2"></div>
         <div class="mb-3">
             <label asp-for="TenDangNhap" class="form-label"></label>
@@ -23,7 +24,7 @@
             <label asp-for="MatKhau" class="form-label"></label>
             <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                <input asp-for="MatKhau" class="form-control" />
+                <input asp-for="MatKhau" type="password" class="form-control" />
             </div>
             <span asp-validation-for="MatKhau" class="text-danger"></span>
         </div>

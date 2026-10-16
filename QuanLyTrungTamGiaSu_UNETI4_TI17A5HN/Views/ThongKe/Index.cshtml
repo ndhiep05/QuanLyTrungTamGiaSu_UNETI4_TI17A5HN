@@ -1,85 +1,338 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@* Họ và tên: Nguyễn Đình Hiệp | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện Thống kê LINQ 10 mục (MODULE 5 - SV1) *@
 @model ThongKeViewModel
 @{
-    ViewData["Title"] = "Thống kê";
+    ViewData["Title"] = "Thống kê LINQ";
 }
-<div class="page-header">
+<div class="page-header mb-4">
     <div>
-        <h1 class="page-title">Thống kê</h1>
-        <p class="page-sub">Số liệu tổng hợp từ cơ sở dữ liệu</p>
+        <h1 class="page-title"><i class="bi bi-bar-chart-line text-primary me-2"></i>Thống kê LINQ</h1>
+        <p class="page-sub">Tổng hợp 10 báo cáo phân tích số liệu bằng ngôn ngữ truy vấn LINQ (Mục 9.6)</p>
     </div>
 </div>
 
-<div class="row g-3 mb-3">
-    <div class="col-md-6">
-        <div class="card stat-card">
-            <div class="stat-icon stat-amber"><i class="bi bi-trophy"></i></div>
-            <div>
-                <div class="stat-label">Môn học có nhiều lượt đăng ký nhất</div>
-                <div class="fw-bold fs-5">@(Model.MonHocNhieuDangKyNhat?.Ten ?? "Chưa có dữ liệu")</div>
-                @if (Model.MonHocNhieuDangKyNhat != null) { <small class="text-muted">@Model.MonHocNhieuDangKyNhat.SoLuong lượt đăng ký</small> }
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card stat-card">
-            <div class="stat-icon stat-indigo"><i class="bi bi-person-check"></i></div>
-            <div>
-                <div class="stat-label">Gia sư đang phụ trách nhiều lớp nhất</div>
-                <div class="fw-bold fs-5">@(Model.GiaSuNhieuLopNhat?.Ten ?? "Chưa có dữ liệu")</div>
-                @if (Model.GiaSuNhieuLopNhat != null) { <small class="text-muted">@Model.GiaSuNhieuLopNhat.SoLuong lớp</small> }
+<div class="alert alert-primary shadow-sm mb-4">
+    <div class="d-flex align-items-center">
+        <i class="bi bi-code-slash fs-3 me-3"></i>
+        <div>
+            <h6 class="fw-bold mb-1">Các phương thức LINQ được sử dụng:</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <span class="badge bg-light text-primary border">GroupBy()</span>
+                <span class="badge bg-light text-primary border">Count()</span>
+                <span class="badge bg-light text-primary border">Sum()</span>
+                <span class="badge bg-light text-primary border">Average()</span>
+                <span class="badge bg-light text-primary border">OrderBy()</span>
+                <span class="badge bg-light text-primary border">OrderByDescending()</span>
+                <span class="badge bg-light text-primary border">Any()</span>
+                <span class="badge bg-light text-primary border">FirstOrDefault()</span>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-3">
+<!-- 4 & 5. Top Highlights -->
+<div class="row g-3 mb-4">
+    <div class="col-md-6">
+        <div class="card stat-card shadow-sm h-100 border-start border-4 border-warning">
+            <div class="stat-icon stat-amber"><i class="bi bi-trophy-fill"></i></div>
+            <div>
+                <div class="stat-label text-muted">4. Môn học có nhiều lượt đăng ký nhất</div>
+                <div class="fw-bold fs-4 text-dark">@(Model.MonHocNhieuDangKyNhat?.Ten ?? "Chưa có dữ liệu")</div>
+                @if (Model.MonHocNhieuDangKyNhat != null)
+                {
+                    <span class="badge bg-warning text-dark mt-1"><i class="bi bi-award me-1"></i>@Model.MonHocNhieuDangKyNhat.SoLuong lượt đăng ký</span>
+                }
+                <small class="d-block text-muted mt-2 font-monospace">LINQ: GroupBy().OrderByDescending().FirstOrDefault()</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card stat-card shadow-sm h-100 border-start border-4 border-info">
+            <div class="stat-icon stat-indigo"><i class="bi bi-star-fill"></i></div>
+            <div>
+                <div class="stat-label text-muted">5. Gia sư phụ trách nhiều lớp nhất</div>
+                <div class="fw-bold fs-4 text-dark">@(Model.GiaSuNhieuLopNhat?.Ten ?? "Chưa có dữ liệu")</div>
+                @if (Model.GiaSuNhieuLopNhat != null)
+                {
+                    <span class="badge bg-info text-dark mt-1"><i class="bi bi-easel me-1"></i>Phụ trách @Model.GiaSuNhieuLopNhat.SoLuong lớp học</span>
+                }
+                <small class="d-block text-muted mt-2 font-monospace">LINQ: GroupBy().OrderByDescending().FirstOrDefault()</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- 1. Số lớp theo môn học -->
     <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header fw-bold"><i class="bi bi-journal-bookmark me-2"></i>Số lớp theo môn học</div>
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-journal-bookmark text-primary me-2"></i>1. Số lớp theo môn học</span>
+                <span class="badge bg-light text-muted">GroupBy, Count</span>
+            </div>
             <div class="card-body">
-                @if (Model.LopTheoMonHoc.Count == 0) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
-                @{ var maxLopTheoMonHoc = Model.LopTheoMonHoc.Count == 0 ? 1 : Math.Max(1, Model.LopTheoMonHoc.Max(x => x.SoLuong)); }
+                @if (!Model.LopTheoMonHoc.Any()) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
+                @{ var maxLopMon = !Model.LopTheoMonHoc.Any() ? 1 : Math.Max(1, Model.LopTheoMonHoc.Max(x => x.SoLuong)); }
                 @foreach (var x in Model.LopTheoMonHoc)
                 {
-                    <div class="bar-row">
-                        <div class="bar-label" title="@x.Ten">@x.Ten</div>
-                        <div class="bar-track"><div class="bar-fill" style="width:@(x.SoLuong * 100 / maxLopTheoMonHoc)%"></div></div>
-                        <div class="bar-num">@x.SoLuong</div>
+                    <div class="bar-row mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold">@x.Ten</span>
+                            <span class="badge bg-primary">@x.SoLuong lớp</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: @(x.SoLuong * 100 / maxLopMon)%"></div>
+                        </div>
                     </div>
                 }
             </div>
         </div>
     </div>
+
+    <!-- 2. Số học viên theo từng lớp -->
     <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header fw-bold"><i class="bi bi-clipboard-data me-2"></i>Số đăng ký theo trạng thái</div>
-            <div class="card-body">
-                @if (Model.DangKyTheoTrangThai.Count == 0) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
-                @{ var maxDangKyTheoTrangThai = Model.DangKyTheoTrangThai.Count == 0 ? 1 : Math.Max(1, Model.DangKyTheoTrangThai.Max(x => x.SoLuong)); }
-                @foreach (var x in Model.DangKyTheoTrangThai)
-                {
-                    <div class="bar-row">
-                        <div class="bar-label" title="@x.Ten">@x.Ten</div>
-                        <div class="bar-track"><div class="bar-fill" style="width:@(x.SoLuong * 100 / maxDangKyTheoTrangThai)%"></div></div>
-                        <div class="bar-num">@x.SoLuong</div>
-                    </div>
-                }
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-people text-success me-2"></i>2. Số học viên theo từng lớp</span>
+                <span class="badge bg-light text-muted">GroupBy, Count, Distinct</span>
             </div>
-        </div>
-    </div>
-    <div class="col-lg-6">
-        <div class="card h-100">
-            <div class="card-header fw-bold"><i class="bi bi-people me-2"></i>Số học viên theo từng lớp</div>
             <div class="card-body">
-                @if (Model.HocVienTheoLop.Count == 0) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
-                @{ var maxHocVienTheoLop = Model.HocVienTheoLop.Count == 0 ? 1 : Math.Max(1, Model.HocVienTheoLop.Max(x => x.SoLuong)); }
+                @if (!Model.HocVienTheoLop.Any()) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
+                @{ var maxHvLop = !Model.HocVienTheoLop.Any() ? 1 : Math.Max(1, Model.HocVienTheoLop.Max(x => x.SoLuong)); }
                 @foreach (var x in Model.HocVienTheoLop)
                 {
-                    <div class="bar-row">
-                        <div class="bar-label" title="@x.Ten">@x.Ten</div>
-                        <div class="bar-track"><div class="bar-fill" style="width:@(x.SoLuong * 100 / maxHocVienTheoLop)%"></div></div>
-                        <div class="bar-num">@x.SoLuong</div>
+                    <div class="bar-row mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold">@x.Ten</span>
+                            <span class="badge bg-success">@x.SoLuong học viên</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: @(x.SoLuong * 100 / maxHvLop)%"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Số đăng ký theo trạng thái -->
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-clipboard-data text-info me-2"></i>3. Số đăng ký theo trạng thái</span>
+                <span class="badge bg-light text-muted">GroupBy, Count</span>
+            </div>
+            <div class="card-body">
+                @if (!Model.DangKyTheoTrangThai.Any()) { <p class="text-muted mb-0">Chưa có dữ liệu.</p> }
+                @{ var maxDkStatus = !Model.DangKyTheoTrangThai.Any() ? 1 : Math.Max(1, Model.DangKyTheoTrangThai.Max(x => x.SoLuong)); }
+                @foreach (var x in Model.DangKyTheoTrangThai)
+                {
+                    <div class="bar-row mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-semibold">@x.Ten</span>
+                            <span class="badge bg-info text-dark">@x.SoLuong lượt</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar bg-info" role="progressbar" style="width: @(x.SoLuong * 100 / maxDkStatus)%"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Số buổi dạy theo gia sư / tháng -->
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-calendar-check text-warning me-2"></i>6. Số buổi dạy theo gia sư / tháng</span>
+                <span class="badge bg-light text-muted">GroupBy, Count, OrderBy</span>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.SoBuoiDayTheoGiaSuThang.Any()) { <p class="text-muted p-3 mb-0">Chưa có dữ liệu buổi dạy.</p> }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Gia sư</th>
+                                    <th>Tháng/Năm</th>
+                                    <th class="text-end">Số buổi dạy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var x in Model.SoBuoiDayTheoGiaSuThang)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@x.TenGiaSu</td>
+                                        <td><span class="badge bg-light text-dark border">@x.ThangNam</span></td>
+                                        <td class="text-end fw-bold text-primary">@x.SoBuoiDay buổi</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 7. Doanh thu học phí theo tháng -->
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-cash-stack text-success me-2"></i>7. Doanh thu học phí theo tháng</span>
+                <span class="badge bg-light text-muted">GroupBy, Sum</span>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.DoanhThuTheoThang.Any()) { <p class="text-muted p-3 mb-0">Chưa có dữ liệu doanh thu.</p> }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Tháng/Năm</th>
+                                    <th class="text-end">Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var x in Model.DoanhThuTheoThang)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold"><i class="bi bi-calendar3 me-1 text-muted"></i>Tháng @x.ThangNam</td>
+                                        <td class="text-end fw-bold text-success fs-6">@x.DoanhThu.ToString("N0") ₫</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. Tổng số tiền còn phải thu theo lớp -->
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-exclamation-diamond text-danger me-2"></i>8. Tổng số tiền còn phải thu theo lớp</span>
+                <span class="badge bg-light text-muted">GroupBy, Sum, OrderByDescending</span>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.TienConPhaiThuTheoLop.Any()) { <p class="text-muted p-3 mb-0">Không có nợ học phí theo lớp.</p> }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Lớp học</th>
+                                    <th class="text-end">Đã thu</th>
+                                    <th class="text-end">Còn phải thu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var x in Model.TienConPhaiThuTheoLop)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@x.TenLop <small class="text-muted d-block">@x.SoDangKy học viên</small></td>
+                                        <td class="text-end text-muted">@x.TongDaThu.ToString("N0") ₫</td>
+                                        <td class="text-end fw-bold text-danger">@x.TongConPhaiThu.ToString("N0") ₫</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 9. Tỷ lệ lấp đầy sĩ số từng lớp -->
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-pie-chart text-purple me-2"></i>9. Tỷ lệ lấp đầy sĩ số từng lớp</span>
+                <span class="badge bg-light text-muted">Select, OrderByDescending</span>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.TyLeLapDaySiSoLop.Any()) { <p class="text-muted p-3 mb-0">Chưa có dữ liệu lớp học.</p> }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Lớp học</th>
+                                    <th class="text-center">Sĩ số</th>
+                                    <th style="width: 40%;">Tỷ lệ lấp đầy</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var x in Model.TyLeLapDaySiSoLop)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@x.TenLop</td>
+                                        <td class="text-center"><small class="badge bg-light text-dark border">@x.SiSoHienTai / @x.SiSoToiDa</small></td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar @(x.TyLeLapDay >= 100 ? "bg-danger" : x.TyLeLapDay >= 80 ? "bg-warning" : "bg-info")" 
+                                                         role="progressbar" style="width: @(Math.Min(100, x.TyLeLapDay))%"></div>
+                                                </div>
+                                                <span class="fw-bold small">@x.TyLeLapDay%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- 10. Tỷ lệ chuyên cần trung bình theo lớp (Mục 9.4 & 9.6) -->
+    <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+            <div class="card-header bg-white fw-bold d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-check2-circle text-teal me-2"></i>10. Tỷ lệ chuyên cần trung bình theo lớp (9.4)</span>
+                <span class="badge bg-light text-muted">GroupBy, Average, Count</span>
+            </div>
+            <div class="card-body p-0">
+                @if (!Model.TyLeChuyenCanTrungBinhLop.Any()) { <p class="text-muted p-3 mb-0">Chưa có dữ liệu điểm danh.</p> }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Lớp học</th>
+                                    <th class="text-center">Có mặt / Tổng</th>
+                                    <th style="width: 40%;">Tỷ lệ chuyên cần</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var x in Model.TyLeChuyenCanTrungBinhLop)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@x.TenLop</td>
+                                        <td class="text-center"><small class="text-muted">@x.SoBuoiCoMat / @x.TongSoBuoiDiemDanh</small></td>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                    <div class="progress-bar @(x.TyLeChuyenCanTrungBinh >= 80 ? "bg-success" : x.TyLeChuyenCanTrungBinh >= 50 ? "bg-warning" : "bg-danger")" 
+                                                         role="progressbar" style="width: @x.TyLeChuyenCanTrungBinh%"></div>
+                                                </div>
+                                                <span class="fw-bold small">@x.TyLeChuyenCanTrungBinh%</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 }
             </div>
