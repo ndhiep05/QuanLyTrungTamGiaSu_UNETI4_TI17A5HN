@@ -31,7 +31,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                query = query.Where(l => l.TenLop.Contains(tuKhoa.Trim()));
+                query = query.Where(l => l.TenLop.Contains(tuKhoa.Trim()) || (l.MoTa != null && l.MoTa.Contains(tuKhoa.Trim())));
             }
 
             if (maMonHoc.HasValue && maMonHoc > 0)
@@ -40,6 +40,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             }
 
             int totalItems = await query.CountAsync();
+
             var items = await query
                 .OrderByDescending(l => l.MaLop)
                 .Skip((trang - 1) * pageSize)
@@ -85,7 +86,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         // 3. THÊM MỚI LỚP HỌC (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaLop,TenLop,MaMonHoc,SiSoToiDa,HocPhi,TrangThai")] LopHoc lopHoc)
+        public async Task<IActionResult> Create([Bind("MaLop,TenLop,MaMonHoc,TrinhDoLop,NgayBatDau,NgayKetThuc,SiSoToiDa,HocPhi,TrangThai,CapDo,MoTa,GhiChu")] LopHoc lopHoc)
         {
             if (ModelState.IsValid)
             {
@@ -113,7 +114,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         // 4. CẬP NHẬT LỚP HỌC (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaLop,TenLop,MaMonHoc,SiSoToiDa,HocPhi,TrangThai")] LopHoc lopHoc)
+        public async Task<IActionResult> Edit(int id, [Bind("MaLop,TenLop,MaMonHoc,TrinhDoLop,NgayBatDau,NgayKetThuc,SiSoToiDa,HocPhi,TrangThai,CapDo,MoTa,GhiChu")] LopHoc lopHoc)
         {
             if (id != lopHoc.MaLop) return NotFound();
 
@@ -137,7 +138,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             return View(lopHoc);
         }
 
-        // 5. XÓA LỚP HỌC (POST) - RÀNG BUỘC KHÓA NGOẠI
+        // 5. XÓA LỚP HỌC (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -145,7 +146,6 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             var lopHoc = await _context.LopHoc.FindAsync(id);
             if (lopHoc == null) return NotFound();
 
-            // RÀNG BUỘC: Không cho phép xóa lớp học nếu đã có học viên đăng ký
             bool daCoDangKy = await _context.DangKyLop.AnyAsync(d => d.MaLop == id);
             if (daCoDangKy)
             {

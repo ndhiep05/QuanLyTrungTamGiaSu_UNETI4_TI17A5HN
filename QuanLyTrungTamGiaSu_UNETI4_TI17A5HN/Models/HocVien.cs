@@ -1,6 +1,6 @@
 ﻿// Họ và tên: Nguyễn Trọng Chuyển
 // Mã sinh viên: 23103100204
-// Nội dung thực hiện: Module 3 - Model Quản lý Học viên
+// Nội dung thực hiện: Module 3 - Model Quản lý Học viên (Bổ sung Trường học & Lớp học hiện tại)
 
 using System.ComponentModel.DataAnnotations;
 
@@ -39,6 +39,14 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models
         [EmailAddress(ErrorMessage = "Email không đúng định dạng")]
         [StringLength(100)]
         public string Email { get; set; } = string.Empty;
+
+        [StringLength(100)]
+        [Display(Name = "Trường học")]
+        public string? TruongHoc { get; set; }
+
+        [StringLength(50)]
+        [Display(Name = "Lớp học hiện tại")]
+        public string? LopHocHienTai { get; set; }
 
         [StringLength(200)]
         [Display(Name = "Địa chỉ")]

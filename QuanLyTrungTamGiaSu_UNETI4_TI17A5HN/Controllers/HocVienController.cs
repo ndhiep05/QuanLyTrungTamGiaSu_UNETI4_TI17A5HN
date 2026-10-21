@@ -23,17 +23,25 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         public async Task<IActionResult> Index(string? tuKhoa, int trang = 1)
         {
             int pageSize = 10;
+
+            // Truy vấn trực tiếp từ bảng HocVien
             var query = _context.HocVien.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                tuKhoa = tuKhoa.Trim();
-                query = query.Where(h => h.HoTen.Contains(tuKhoa) ||
-                                         h.Email.Contains(tuKhoa) ||
-                                         h.SoDienThoai.Contains(tuKhoa));
+                tuKhoa = tuKhoa.Trim().ToLower();
+                query = query.Where(h =>
+                    (h.HoTen != null && h.HoTen.ToLower().Contains(tuKhoa)) ||
+                    (h.Email != null && h.Email.ToLower().Contains(tuKhoa)) ||
+                    (h.SoDienThoai != null && h.SoDienThoai.Contains(tuKhoa)) ||
+                    (h.TruongHoc != null && h.TruongHoc.ToLower().Contains(tuKhoa)) ||
+                    (h.LopHocHienTai != null && h.LopHocHienTai.ToLower().Contains(tuKhoa)) ||
+                    (h.DiaChi != null && h.DiaChi.ToLower().Contains(tuKhoa))
+                );
             }
 
             int totalItems = await query.CountAsync();
+
             var items = await query
                 .OrderByDescending(h => h.MaHocVien)
                 .Skip((trang - 1) * pageSize)
@@ -73,18 +81,16 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             return View();
         }
 
-        // 3. THÊM MỚI (POST) - RÀNG BUỘC TRÙNG SĐT & EMAIL
+        // 3. THÊM MỚI (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("HoTen,NgaySinh,GioiTinh,SoDienThoai,Email,DiaChi,TrinhDoHienTai,TrangThai,MaTaiKhoan")] HocVien hocVien)
+        public async Task<IActionResult> Create([Bind("HoTen,NgaySinh,GioiTinh,SoDienThoai,Email,TruongHoc,LopHocHienTai,DiaChi,TrinhDoHienTai,TrangThai,MaTaiKhoan")] HocVien hocVien)
         {
-            // RÀNG BUỘC: Kiểm tra trùng SĐT
-            if (await _context.HocVien.AnyAsync(h => h.SoDienThoai == hocVien.SoDienThoai))
+            if (!string.IsNullOrEmpty(hocVien.SoDienThoai) && await _context.HocVien.AnyAsync(h => h.SoDienThoai == hocVien.SoDienThoai))
             {
                 ModelState.AddModelError("SoDienThoai", "Số điện thoại này đã tồn tại trong hệ thống!");
             }
 
-            // RÀNG BUỘC: Kiểm tra trùng Email
             if (!string.IsNullOrEmpty(hocVien.Email) && await _context.HocVien.AnyAsync(h => h.Email == hocVien.Email))
             {
                 ModelState.AddModelError("Email", "Email này đã tồn tại trong hệ thống!");
@@ -114,14 +120,15 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         // 4. CHỈNH SỬA (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaHocVien,HoTen,NgaySinh,GioiTinh,SoDienThoai,Email,DiaChi,TrinhDoHienTai,TrangThai,MaTaiKhoan")] HocVien hocVien)
+        public async Task<IActionResult> Edit(int id, [Bind("MaHocVien,HoTen,NgaySinh,GioiTinh,SoDienThoai,Email,TruongHoc,LopHocHienTai,DiaChi,TrinhDoHienTai,TrangThai,MaTaiKhoan")] HocVien hocVien)
         {
             if (id != hocVien.MaHocVien) return NotFound();
 
-            if (await _context.HocVien.AnyAsync(h => h.SoDienThoai == hocVien.SoDienThoai && h.MaHocVien != id))
+            if (!string.IsNullOrEmpty(hocVien.SoDienThoai) && await _context.HocVien.AnyAsync(h => h.SoDienThoai == hocVien.SoDienThoai && h.MaHocVien != id))
             {
                 ModelState.AddModelError("SoDienThoai", "Số điện thoại này thuộc về học viên khác!");
             }
+
             if (!string.IsNullOrEmpty(hocVien.Email) && await _context.HocVien.AnyAsync(h => h.Email == hocVien.Email && h.MaHocVien != id))
             {
                 ModelState.AddModelError("Email", "Email này thuộc về học viên khác!");
@@ -154,14 +161,12 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             var hocVien = await _context.HocVien.FindAsync(id);
             if (hocVien == null) return NotFound();
 
-            // RÀNG BUỘC: Không cho phép xóa học viên đã phát sinh lịch sử đăng ký lớp
             bool daDangKy = await _context.DangKyLop.AnyAsync(d => d.MaHocVien == id);
             if (daDangKy)
             {
                 TempData["Error"] = "Không thể xóa học viên này vì đã có dữ liệu đăng ký lớp học!";
                 return RedirectToAction(nameof(Index));
             }
-
             _context.HocVien.Remove(hocVien);
             await _context.SaveChangesAsync();
             TempData["Success"] = "Xóa học viên thành công!";
