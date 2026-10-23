@@ -13,4 +13,7 @@ public class PhanTrangViewModel
     public int TotalPages => PageSize <= 0 ? 0 : (int)Math.Ceiling((double)TotalItems / PageSize);
     public int TuMuc => TotalItems == 0 ? 0 : (Page - 1) * PageSize + 1;
     public int DenMuc => Math.Min(Page * PageSize, TotalItems);
+
+    public int CurrentPage { get; internal set; }
+    public string? ActionName { get; internal set; }
 }

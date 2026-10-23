@@ -1,4 +1,4 @@
-// Họ và tên: <Điền họ và tên>
+// Họ và tên: <NguyenDinhHiep>
 // Mã sinh viên: 23103100230
 // Nội dung thực hiện: Thiết kế Entity dùng chung cho cả nhóm (khung CSDL).
 using System.ComponentModel.DataAnnotations;

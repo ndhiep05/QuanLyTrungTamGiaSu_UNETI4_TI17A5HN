@@ -1,5 +1,5 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
-@model PhanTrangViewModel
+@* Họ và tên: Nguyễn Trọng Chuyển | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.ViewModels.PhanTrangViewModel
 @{
     // Giữ nguyên mọi tham số tìm kiếm/lọc/sắp xếp, chỉ đổi page (yêu cầu mục 15 của đề)
     string Link(int p)
@@ -21,7 +21,9 @@
     {
         <nav aria-label="Phân trang">
             <ul class="pagination pagination-sm mb-0">
-                <li class="page-item @(Model.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Link(Model.Page - 1)">&laquo;</a></li>
+                <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Link(Model.Page - 1)">&laquo;</a>
+                </li>
                 @if (tu > 1)
                 {
                     <li class="page-item"><a class="page-link" href="@Link(1)">1</a></li>
@@ -29,14 +31,18 @@
                 }
                 @for (var trang = tu; trang <= den; trang++)
                 {
-                    <li class="page-item @(trang == Model.Page ? "active" : "")"><a class="page-link" href="@Link(trang)">@trang</a></li>
+                    <li class="page-item @(trang == Model.Page ? "active" : "")">
+                        <a class="page-link" href="@Link(trang)">@trang</a>
+                    </li>
                 }
                 @if (den < tong)
                 {
                     if (den < tong - 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
                     <li class="page-item"><a class="page-link" href="@Link(tong)">@tong</a></li>
                 }
-                <li class="page-item @(Model.Page >= tong ? "disabled" : "")"><a class="page-link" href="@Link(Model.Page + 1)">&raquo;</a></li>
+                <li class="page-item @(Model.Page >= tong ? "disabled" : "")">
+                    <a class="page-link" href="@Link(Model.Page + 1)">&raquo;</a>
+                </li>
             </ul>
         </nav>
     }

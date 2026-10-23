@@ -1,59 +1,78 @@
-// Họ và tên: <Điền họ và tên>
-// Mã sinh viên: 23103100230
-// Nội dung thực hiện: Thiết kế Entity dùng chung cho cả nhóm (khung CSDL).
+﻿// Họ và tên: Nguyễn Trọng Chuyển | Mã sinh viên: 23103100204 | Nội dung thực hiện: Model Lớp học
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models;
-
-public class LopHoc
+namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models
 {
-    [Key]
-    public int MaLop { get; set; }
+    [Table("LopHoc")]
+    public class LopHoc
+    {
+        [Key]
+        [Column("MaLop")]
+        public int MaLop { get; set; }
 
-    [Required(ErrorMessage = "Tên lớp là bắt buộc")]
-    [StringLength(100)]
-    [Display(Name = "Tên lớp")]
-    public string TenLop { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Tên lớp không được để trống")]
+        [StringLength(100)]
+        [Column("TenLop")]
+        [Display(Name = "Tên lớp")]
+        public string TenLop { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "Vui lòng chọn môn học")]
-    [Display(Name = "Môn học")]
-    public int MaMonHoc { get; set; }
+        [Required(ErrorMessage = "Vui lòng chọn môn học")]
+        [Column("MaMonHoc")]
+        [Display(Name = "Môn học")]
+        public int MaMonHoc { get; set; }
 
-    [Required]
-    [StringLength(30)]
-    [Display(Name = "Trình độ lớp")]
-    public string TrinhDoLop { get; set; } = "Cơ bản";
+        [ForeignKey("MaMonHoc")]
+        public virtual MonHoc? MonHoc { get; set; }
 
-    [Required(ErrorMessage = "Ngày bắt đầu là bắt buộc")]
-    [DataType(DataType.Date)]
-    [Display(Name = "Ngày bắt đầu")]
-    public DateTime NgayBatDau { get; set; }
+        [Column("TrinhDoLop")]
+        [Display(Name = "Trình độ lớp")]
+        public string? TrinhDoLop { get; set; }
 
-    [Required(ErrorMessage = "Ngày kết thúc là bắt buộc")]
-    [DataType(DataType.Date)]
-    [Display(Name = "Ngày kết thúc")]
-    public DateTime NgayKetThuc { get; set; }   // kiểm tra >= NgayBatDau trong Controller
+        [Required(ErrorMessage = "Ngày bắt đầu là bắt buộc")]
+        [DataType(DataType.Date)]
+        [Column("NgayBatDau")]
+        [Display(Name = "Ngày bắt đầu")]
+        public DateTime NgayBatDau { get; set; }
 
-    [Range(1, 1000, ErrorMessage = "Sĩ số tối đa phải lớn hơn 0")]
-    [Display(Name = "Sĩ số tối đa")]
-    public int SiSoToiDa { get; set; }
+        [Required(ErrorMessage = "Ngày kết thúc là bắt buộc")]
+        [DataType(DataType.Date)]
+        [Column("NgayKetThuc")]
+        [Display(Name = "Ngày kết thúc")]
+        public DateTime NgayKetThuc { get; set; }
 
-    [Range(0, double.MaxValue, ErrorMessage = "Học phí phải từ 0 trở lên")]
-    [DataType(DataType.Currency)]
-    [Display(Name = "Học phí")]
-    public decimal HocPhi { get; set; }
+        [Required(ErrorMessage = "Sĩ số tối đa phải > 0")]
+        [Range(1, 500, ErrorMessage = "Sĩ số tối đa từ 1 đến 500")]
+        [Column("SiSoToiDa")]
+        [Display(Name = "Sĩ số tối đa")]
+        public int SiSoToiDa { get; set; }
 
-    [Required]
-    [StringLength(30)]
-    [Display(Name = "Trạng thái")]
-    public string TrangThai { get; set; } = TrangThaiLop.ChuaMoDangKy;
+        [Required(ErrorMessage = "Học phí >= 0")]
+        [Range(0, double.MaxValue, ErrorMessage = "Học phí phải lớn hơn hoặc bằng 0")]
+        [Column("HocPhi")]
+        [Display(Name = "Học phí")]
+        public decimal HocPhi { get; set; }
 
-    [StringLength(1000)]
-    [Display(Name = "Mô tả")]
-    public string? MoTa { get; set; }
+        [Column("TrangThai")]
+        [Display(Name = "Trạng thái")]
+        public string TrangThai { get; set; } = "Đang mở đăng ký";
 
-    public MonHoc? MonHoc { get; set; }
-    public ICollection<DangKyLop> DangKyLops { get; set; } = new List<DangKyLop>();
-    public ICollection<PhanCongGiaSu> PhanCongs { get; set; } = new List<PhanCongGiaSu>();
-    public ICollection<LichHoc> LichHocs { get; set; } = new List<LichHoc>();
+        [Column("CapDo")]
+        [Display(Name = "Cấp độ")]
+        public string? CapDo { get; set; }
+
+        [Column("MoTa")]
+        [Display(Name = "Mô tả")]
+        public string? MoTa { get; set; }
+
+        [Column("GhiChu")]
+        [Display(Name = "Ghi chú")]
+        public string? GhiChu { get; set; }
+
+        // --- NAVIGATION PROPERTIES ---
+        public virtual ICollection<DangKyLop> DangKyLops { get; set; } = new List<DangKyLop>();
+        public virtual ICollection<PhanCongGiaSu> PhanCongs { get; set; } = new List<PhanCongGiaSu>();
+        public virtual ICollection<PhanCongGiaSu> PhanCongGiaSus { get; set; } = new List<PhanCongGiaSu>();
+        public virtual ICollection<LichHoc> LichHocs { get; set; } = new List<LichHoc>();
+    }
 }
