@@ -19,38 +19,72 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 
         // GET: MonHoc
         [HttpGet]
-        public async Task<IActionResult> Index(string? tuKhoa, int page = 1)
+        public async Task<IActionResult> Index(
+            string? tuKhoa,
+            string? capDo,
+            string? trangThai,
+            string? sapXep,
+            int page = 1)
         {
             const int kichThuocTrang = 10;
-            if (page < 1) page = 1;
-
             var truyVan = _context.MonHoc.AsNoTracking();
+
+            tuKhoa = tuKhoa?.Trim();
+            capDo = capDo?.Trim();
+            trangThai = trangThai?.Trim();
 
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                tuKhoa = tuKhoa.Trim();
-
                 truyVan = truyVan.Where(m =>
                     m.TenMonHoc.Contains(tuKhoa) ||
                     (m.CapDo != null && m.CapDo.Contains(tuKhoa)) ||
                     (m.MoTa != null && m.MoTa.Contains(tuKhoa)));
             }
 
-            var tongSoBanGhi = await truyVan.CountAsync();
-            var tongSoTrang = (int)Math.Ceiling((double)tongSoBanGhi / kichThuocTrang);
-
-            if (tongSoTrang > 0 && page > tongSoTrang)
+            if (!string.IsNullOrWhiteSpace(capDo))
             {
-                page = tongSoTrang;
+                truyVan = truyVan.Where(m => m.CapDo == capDo);
             }
 
+            if (!string.IsNullOrWhiteSpace(trangThai))
+            {
+                if (trangThai.Equals("HoatDong", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Hoạt động", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(m => m.TrangThai == "Hoạt động" || m.TrangThai == "HoatDong");
+                }
+                else if (trangThai.Equals("Khoa", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Khóa", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(m => m.TrangThai == "Khóa" || m.TrangThai == "Khoa");
+                }
+                else
+                {
+                    truyVan = truyVan.Where(m => m.TrangThai == trangThai);
+                }
+            }
+
+            truyVan = (sapXep ?? "ten_tang").ToLowerInvariant() switch
+            {
+                "ten_giam" => truyVan.OrderByDescending(m => m.TenMonHoc).ThenBy(m => m.MaMonHoc),
+                "capdo_tang" => truyVan.OrderBy(m => m.CapDo).ThenBy(m => m.TenMonHoc),
+                "id_giam" => truyVan.OrderByDescending(m => m.MaMonHoc),
+                "id_tang" => truyVan.OrderBy(m => m.MaMonHoc),
+                _ => truyVan.OrderBy(m => m.TenMonHoc).ThenBy(m => m.MaMonHoc)
+            };
+
+            var tongSoBanGhi = await truyVan.CountAsync();
+            var tongSoTrang = (int)Math.Ceiling((double)tongSoBanGhi / kichThuocTrang);
+            page = Math.Clamp(page, 1, Math.Max(tongSoTrang, 1));
+
             var danhSach = await truyVan
-                .OrderBy(m => m.TenMonHoc)
                 .Skip((page - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
                 .ToListAsync();
 
             ViewBag.TuKhoa = tuKhoa;
+            ViewBag.CapDo = capDo;
+            ViewBag.TrangThai = trangThai;
+            ViewBag.SapXep = string.IsNullOrWhiteSpace(sapXep) ? "ten_tang" : sapXep;
+
             ViewBag.PhanTrang = new PhanTrangViewModel
             {
                 Page = page,

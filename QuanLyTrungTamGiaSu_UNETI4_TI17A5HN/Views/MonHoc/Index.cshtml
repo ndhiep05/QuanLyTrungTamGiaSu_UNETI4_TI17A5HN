@@ -4,12 +4,26 @@
     ViewData["Title"] = "Môn học";
     var vaiTro = Context.Session.GetString("VaiTro");
     var laAdmin = vaiTro == "Admin";
+    string? tuKhoa = ViewBag.TuKhoa as string;
+    string? capDo = ViewBag.CapDo as string;
+    string? trangThai = ViewBag.TrangThai as string;
+    string? sapXep = ViewBag.SapXep as string;
     var pt = ViewBag.PhanTrang as PhanTrangViewModel;
+
+    var dsCapDo = new[] { "Cơ bản", "Trung bình", "Nâng cao" };
+    var dsTrangThai = new[] { "Hoạt động", "Khóa" };
+    var dsSapXep = new[] {
+        ("ten_tang", "Tên A → Z"),
+        ("ten_giam", "Tên Z → A"),
+        ("capdo_tang", "Cấp độ"),
+        ("id_giam", "Mới nhất"),
+        ("id_tang", "Cũ nhất")
+    };
 }
 <div class="page-header">
     <div>
         <h1 class="page-title">Môn học</h1>
-        <p class="page-sub">Danh sách môn học</p>
+        <p class="page-sub">Tìm kiếm, lọc, sắp xếp và phân trang danh sách môn học</p>
     </div>
     @if (laAdmin)
     {
@@ -19,22 +33,46 @@
 
 <div class="card card-table">
     <div class="card-header">
-        <form method="get" class="row g-2 align-items-center">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên môn học..." />
-                </div>
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4 col-xl-4">
+                <label class="form-label small mb-1">Từ khóa</label>
+                <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control" placeholder="Tìm theo tên môn học, mô tả..." />
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Cấp độ</label>
+                <select name="capDo" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var c in dsCapDo) { <option value="@c" selected="@(capDo == c)">@c</option> }
+                </select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Trạng thái</label>
+                <select name="trangThai" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var t in dsTrangThai) { 
+                        var isSel = string.Equals(trangThai, t, StringComparison.OrdinalIgnoreCase) || 
+                                    (t == "Hoạt động" && trangThai == "HoatDong") ||
+                                    (t == "Khóa" && trangThai == "Khoa");
+                        <option value="@t" selected="@isSel">@t</option> 
+                    }
+                </select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Sắp xếp</label>
+                <select name="sapXep" class="form-select">
+                    @foreach (var (v, t) in dsSapXep) { <option value="@v" selected="@(sapXep == v)">@t</option> }
+                </select>
+            </div>
+            <div class="col-12 col-xl-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i> Lọc</button>
                 <a asp-action="Index" class="btn btn-light">Đặt lại</a>
             </div>
         </form>
     </div>
+
     @if (!Model.Any())
     {
-        <div class="empty-state"><i class="bi bi-inbox"></i>Không có dữ liệu phù hợp.</div>
+        <div class="empty-state"><i class="bi bi-inbox"></i>Không tìm thấy môn học phù hợp.</div>
     }
     else
     {
@@ -53,7 +91,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>@(item.TenMonHoc)</td>
+                        <td class="fw-semibold">@(item.TenMonHoc)</td>
                         <td>@(item.CapDo)</td>
                         <td>@(item.MoTa != null && item.MoTa.Length > 60 ? item.MoTa[..60] + "…" : item.MoTa)</td>
                         <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>

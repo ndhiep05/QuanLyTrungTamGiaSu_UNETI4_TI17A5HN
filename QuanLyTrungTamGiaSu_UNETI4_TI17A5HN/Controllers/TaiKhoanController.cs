@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
@@ -94,48 +93,74 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             return RedirectToAction("KhongCoQuyen", "Home");
         }
 
-
-
         [HttpGet]
         [AdminOnly]
-        public async Task<IActionResult> Index(string? tuKhoa, int page = 1)
+        public async Task<IActionResult> Index(
+            string? tuKhoa,
+            string? vaiTro,
+            string? trangThai,
+            string? sapXep,
+            int page = 1)
         {
             const int kichThuocTrang = 10;
-
-            if (page < 1)
-            {
-                page = 1;
-            }
-
             var truyVan = _context.TaiKhoan.AsNoTracking();
+
+            tuKhoa = tuKhoa?.Trim();
+            vaiTro = vaiTro?.Trim();
+            trangThai = trangThai?.Trim();
 
             if (!string.IsNullOrWhiteSpace(tuKhoa))
             {
-                tuKhoa = tuKhoa.Trim();
-
                 truyVan = truyVan.Where(t =>
                     t.TenDangNhap.Contains(tuKhoa) ||
                     t.HoTen.Contains(tuKhoa) ||
                     t.Email.Contains(tuKhoa));
             }
 
-            var tongSoBanGhi = await truyVan.CountAsync();
-
-            var tongSoTrang = (int)Math.Ceiling(
-                (double)tongSoBanGhi / kichThuocTrang);
-
-            if (tongSoTrang > 0 && page > tongSoTrang)
+            if (!string.IsNullOrWhiteSpace(vaiTro))
             {
-                page = tongSoTrang;
+                truyVan = truyVan.Where(t => t.VaiTro == vaiTro);
             }
 
+            if (!string.IsNullOrWhiteSpace(trangThai))
+            {
+                if (trangThai.Equals("HoatDong", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Hoạt động", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(t => t.TrangThai == "HoatDong" || t.TrangThai == "Hoạt động");
+                }
+                else if (trangThai.Equals("Khoa", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Khóa", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(t => t.TrangThai == "Khoa" || t.TrangThai == "Khóa");
+                }
+                else
+                {
+                    truyVan = truyVan.Where(t => t.TrangThai == trangThai);
+                }
+            }
+
+            truyVan = (sapXep ?? "id_giam").ToLowerInvariant() switch
+            {
+                "id_tang" => truyVan.OrderBy(t => t.MaTaiKhoan),
+                "ten_tang" => truyVan.OrderBy(t => t.TenDangNhap).ThenBy(t => t.MaTaiKhoan),
+                "ten_giam" => truyVan.OrderByDescending(t => t.TenDangNhap).ThenBy(t => t.MaTaiKhoan),
+                "hoten_tang" => truyVan.OrderBy(t => t.HoTen).ThenBy(t => t.MaTaiKhoan),
+                "hoten_giam" => truyVan.OrderByDescending(t => t.HoTen).ThenBy(t => t.MaTaiKhoan),
+                _ => truyVan.OrderByDescending(t => t.MaTaiKhoan)
+            };
+
+            var tongSoBanGhi = await truyVan.CountAsync();
+            var tongSoTrang = (int)Math.Ceiling((double)tongSoBanGhi / kichThuocTrang);
+            page = Math.Clamp(page, 1, Math.Max(tongSoTrang, 1));
+
             var danhSach = await truyVan
-                .OrderBy(t => t.MaTaiKhoan)
                 .Skip((page - 1) * kichThuocTrang)
                 .Take(kichThuocTrang)
                 .ToListAsync();
 
             ViewBag.TuKhoa = tuKhoa;
+            ViewBag.VaiTro = vaiTro;
+            ViewBag.TrangThai = trangThai;
+            ViewBag.SapXep = string.IsNullOrWhiteSpace(sapXep) ? "id_giam" : sapXep;
 
             ViewBag.PhanTrang = new PhanTrangViewModel
             {
@@ -146,8 +171,6 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 
             return View(danhSach);
         }
-
-
 
         [HttpGet]
         [AdminOnly]
@@ -234,7 +257,6 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
         [HttpGet]
         [AdminOnly]
         public async Task<IActionResult> Edit(int id)
@@ -250,7 +272,6 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 
             return View(taiKhoan);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -326,7 +347,6 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             TempData["ThongBao"] = "Cập nhật tài khoản thành công.";
             return RedirectToAction(nameof(Index));
         }
-
 
         [HttpGet]
         [AdminOnly]
@@ -414,17 +434,5 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
-
-
-
-
-
-
-
-
-
     }
 }
-
-

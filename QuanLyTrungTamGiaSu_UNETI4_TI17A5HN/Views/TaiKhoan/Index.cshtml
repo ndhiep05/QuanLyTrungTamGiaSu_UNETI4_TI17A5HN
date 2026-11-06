@@ -4,12 +4,27 @@
     ViewData["Title"] = "Tài khoản";
     var vaiTro = Context.Session.GetString("VaiTro");
     var laAdmin = vaiTro == "Admin";
+    string? tuKhoa = ViewBag.TuKhoa as string;
+    string? filterVaiTro = ViewBag.VaiTro as string;
+    string? trangThai = ViewBag.TrangThai as string;
+    string? sapXep = ViewBag.SapXep as string;
     var pt = ViewBag.PhanTrang as PhanTrangViewModel;
+
+    var dsVaiTro = new[] { ("Admin", "Quản trị viên"), ("GiaSu", "Gia sư"), ("HocVien", "Học viên") };
+    var dsTrangThai = new[] { ("HoatDong", "Hoạt động"), ("Khoa", "Khóa") };
+    var dsSapXep = new[] { 
+        ("id_giam", "Mới nhất"),
+        ("id_tang", "Cũ nhất"),
+        ("ten_tang", "Tên đăng nhập A → Z"),
+        ("ten_giam", "Tên đăng nhập Z → A"),
+        ("hoten_tang", "Họ tên A → Z"),
+        ("hoten_giam", "Họ tên Z → A")
+    };
 }
 <div class="page-header">
     <div>
         <h1 class="page-title">Tài khoản</h1>
-        <p class="page-sub">Danh sách tài khoản</p>
+        <p class="page-sub">Tìm kiếm, lọc, sắp xếp và phân trang danh sách tài khoản</p>
     </div>
     @if (laAdmin)
     {
@@ -19,22 +34,46 @@
 
 <div class="card card-table">
     <div class="card-header">
-        <form method="get" class="row g-2 align-items-center">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên đăng nhập, họ tên, email..." />
-                </div>
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-4 col-xl-4">
+                <label class="form-label small mb-1">Từ khóa</label>
+                <input type="text" name="tuKhoa" value="@tuKhoa" class="form-control" placeholder="Tên đăng nhập, họ tên, email..." />
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-outline-primary">Tìm kiếm</button>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Vai trò</label>
+                <select name="vaiTro" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var (v, t) in dsVaiTro) { <option value="@v" selected="@(filterVaiTro == v)">@t</option> }
+                </select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Trạng thái</label>
+                <select name="trangThai" class="form-select">
+                    <option value="">Tất cả</option>
+                    @foreach (var (v, t) in dsTrangThai) { 
+                        var isSel = string.Equals(trangThai, v, StringComparison.OrdinalIgnoreCase) || 
+                                    (v == "HoatDong" && trangThai == "Hoạt động") ||
+                                    (v == "Khoa" && trangThai == "Khóa");
+                        <option value="@v" selected="@isSel">@t</option> 
+                    }
+                </select>
+            </div>
+            <div class="col-md-4 col-xl-2">
+                <label class="form-label small mb-1">Sắp xếp</label>
+                <select name="sapXep" class="form-select">
+                    @foreach (var (v, t) in dsSapXep) { <option value="@v" selected="@(sapXep == v)">@t</option> }
+                </select>
+            </div>
+            <div class="col-12 col-xl-2">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-funnel me-1"></i> Lọc</button>
                 <a asp-action="Index" class="btn btn-light">Đặt lại</a>
             </div>
         </form>
     </div>
+
     @if (!Model.Any())
     {
-        <div class="empty-state"><i class="bi bi-inbox"></i>Không có dữ liệu phù hợp.</div>
+        <div class="empty-state"><i class="bi bi-inbox"></i>Không tìm thấy tài khoản phù hợp.</div>
     }
     else
     {
@@ -53,11 +92,23 @@
                 <tbody>
                 @foreach (var item in Model)
                 {
+                    var vaiTroLabel = item.VaiTro switch {
+                        "Admin" => "Quản trị viên",
+                        "GiaSu" => "Gia sư",
+                        "HocVien" => "Học viên",
+                        _ => item.VaiTro
+                    };
+                    var vaiTroColor = item.VaiTro switch {
+                        "Admin" => "danger",
+                        "GiaSu" => "primary",
+                        "HocVien" => "info",
+                        _ => "secondary"
+                    };
                     <tr>
-                        <td>@(item.TenDangNhap)</td>
+                        <td class="fw-semibold">@(item.TenDangNhap)</td>
                         <td>@(item.HoTen)</td>
                         <td>@(item.Email)</td>
-                        <td>@(item.VaiTro)</td>
+                        <td><span class="badge badge-soft-@vaiTroColor">@vaiTroLabel</span></td>
                         <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>
                         <td class="text-end text-nowrap">
                             @if (laAdmin)
@@ -80,7 +131,7 @@
 
 @if (TempData["ThongBao"] != null)
 {
-    <div class="alert alert-info alert-dismissible fade show"
+    <div class="alert alert-info alert-dismissible fade show mt-3"
          role="alert">
         @TempData["ThongBao"]
         <button type="button"
