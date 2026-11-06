@@ -2,6 +2,18 @@
 @model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.TaiKhoan
 @{
     ViewData["Title"] = "Xóa tài khoản";
+    var vaiTroLabel = Model.VaiTro switch {
+        "Admin" => "Quản trị viên",
+        "GiaSu" => "Gia sư",
+        "HocVien" => "Học viên",
+        _ => Model.VaiTro
+    };
+    var vaiTroColor = Model.VaiTro switch {
+        "Admin" => "danger",
+        "GiaSu" => "purple",
+        "HocVien" => "info",
+        _ => "secondary"
+    };
 }
 <div class="page-header">
     <div>
@@ -20,7 +32,7 @@
             <dt class="col-sm-3">Email</dt>
             <dd class="col-sm-9">@(Model.Email)</dd>
             <dt class="col-sm-3">Vai trò</dt>
-            <dd class="col-sm-9">@(Model.VaiTro)</dd>
+            <dd class="col-sm-9"><span class="badge badge-soft-@vaiTroColor" style="@(Model.VaiTro == "GiaSu" ? "background-color: #ede9fe !important; color: #5b21b6 !important; border: 1px solid #ddd6fe !important;" : "")">@vaiTroLabel</span></dd>
             <dt class="col-sm-3">Trạng thái</dt>
             <dd class="col-sm-9"><partial name="_TrangThaiBadge" model="Model.TrangThai" /></dd>
         </dl>

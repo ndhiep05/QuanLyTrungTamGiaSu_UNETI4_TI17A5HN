@@ -100,7 +100,7 @@
                     };
                     var vaiTroColor = item.VaiTro switch {
                         "Admin" => "danger",
-                        "GiaSu" => "primary",
+                        "GiaSu" => "purple",
                         "HocVien" => "info",
                         _ => "secondary"
                     };
@@ -108,7 +108,7 @@
                         <td class="fw-semibold">@(item.TenDangNhap)</td>
                         <td>@(item.HoTen)</td>
                         <td>@(item.Email)</td>
-                        <td><span class="badge badge-soft-@vaiTroColor">@vaiTroLabel</span></td>
+                        <td><span class="badge badge-soft-@vaiTroColor" style="@(item.VaiTro == "GiaSu" ? "background-color: #ede9fe !important; color: #5b21b6 !important; border: 1px solid #ddd6fe !important;" : "")">@vaiTroLabel</span></td>
                         <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>
                         <td class="text-end text-nowrap">
                             @if (laAdmin)
