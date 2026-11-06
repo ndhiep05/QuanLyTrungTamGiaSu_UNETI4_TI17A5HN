@@ -5,6 +5,7 @@
 using Microsoft.EntityFrameworkCore;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,9 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// 4. Đăng ký dịch vụ xuất Excel
+builder.Services.AddScoped<ExcelExportService>();
 
 var app = builder.Build();
 
@@ -82,7 +86,7 @@ catch (Exception ex)
     Console.WriteLine("Lỗi khởi tạo CSDL: " + ex.Message);
 }
 
-// 4. Configure the HTTP request pipeline
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

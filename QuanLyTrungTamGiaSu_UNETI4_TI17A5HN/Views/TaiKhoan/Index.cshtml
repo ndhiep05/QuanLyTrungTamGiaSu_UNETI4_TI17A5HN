@@ -28,7 +28,10 @@
     </div>
     @if (laAdmin)
     {
-        <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm mới</a>
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-action="XuatExcel" asp-route-tuKhoa="@tuKhoa" asp-route-vaiTro="@filterVaiTro" asp-route-trangThai="@trangThai" asp-route-sapXep="@sapXep" class="btn btn-outline-success" title="Xuất danh sách ra file Excel"><i class="bi bi-file-earmark-excel me-1"></i> Xuất Excel</a>
+            <a asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> Thêm mới</a>
+        </div>
     }
 </div>
 

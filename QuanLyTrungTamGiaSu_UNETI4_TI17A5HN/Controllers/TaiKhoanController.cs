@@ -4,16 +4,19 @@ using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.ViewModels;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Filters;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Services;
 
 namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 {
     public class TaiKhoanController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ExcelExportService _excelService;
 
-        public TaiKhoanController(AppDbContext context)
+        public TaiKhoanController(AppDbContext context, ExcelExportService? excelService = null)
         {
             _context = context;
+            _excelService = excelService ?? new ExcelExportService();
         }
 
         [HttpGet]
@@ -170,6 +173,84 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             };
 
             return View(danhSach);
+        }
+
+        // GET: TaiKhoan/XuatExcel
+        [HttpGet]
+        [AdminOnly]
+        public async Task<IActionResult> XuatExcel(
+            string? tuKhoa,
+            string? vaiTro,
+            string? trangThai,
+            string? sapXep)
+        {
+            var truyVan = _context.TaiKhoan.AsNoTracking();
+
+            tuKhoa = tuKhoa?.Trim();
+            vaiTro = vaiTro?.Trim();
+            trangThai = trangThai?.Trim();
+
+            var boLocList = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(tuKhoa))
+            {
+                truyVan = truyVan.Where(t =>
+                    t.TenDangNhap.Contains(tuKhoa) ||
+                    t.HoTen.Contains(tuKhoa) ||
+                    t.Email.Contains(tuKhoa));
+                boLocList.Add($"Từ khóa: \"{tuKhoa}\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(vaiTro))
+            {
+                truyVan = truyVan.Where(t => t.VaiTro == vaiTro);
+                var tenVaiTro = vaiTro switch
+                {
+                    "Admin" => "Quản trị viên",
+                    "GiaSu" => "Gia sư",
+                    "HocVien" => "Học viên",
+                    _ => vaiTro
+                };
+                boLocList.Add($"Vai trò: {tenVaiTro}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(trangThai))
+            {
+                if (trangThai.Equals("HoatDong", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Hoạt động", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(t => t.TrangThai == "HoatDong" || t.TrangThai == "Hoạt động");
+                    boLocList.Add("Trạng thái: Hoạt động");
+                }
+                else if (trangThai.Equals("Khoa", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Khóa", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(t => t.TrangThai == "Khoa" || t.TrangThai == "Khóa");
+                    boLocList.Add("Trạng thái: Khóa");
+                }
+                else
+                {
+                    truyVan = truyVan.Where(t => t.TrangThai == trangThai);
+                    boLocList.Add($"Trạng thái: {trangThai}");
+                }
+            }
+
+            truyVan = (sapXep ?? "id_giam").ToLowerInvariant() switch
+            {
+                "id_tang" => truyVan.OrderBy(t => t.MaTaiKhoan),
+                "ten_tang" => truyVan.OrderBy(t => t.TenDangNhap).ThenBy(t => t.MaTaiKhoan),
+                "ten_giam" => truyVan.OrderByDescending(t => t.TenDangNhap).ThenBy(t => t.MaTaiKhoan),
+                "hoten_tang" => truyVan.OrderBy(t => t.HoTen).ThenBy(t => t.MaTaiKhoan),
+                "hoten_giam" => truyVan.OrderByDescending(t => t.HoTen).ThenBy(t => t.MaTaiKhoan),
+                _ => truyVan.OrderByDescending(t => t.MaTaiKhoan)
+            };
+
+            var danhSach = await truyVan.ToListAsync();
+            var nguoiXuat = HttpContext.Session.GetString("HoTen") ?? "Quản trị viên";
+            var thongTinBoLoc = boLocList.Any() ? string.Join(", ", boLocList) : "Tất cả";
+
+            var fileBytes = _excelService.XuatDanhSachTaiKhoan(danhSach, nguoiXuat, thongTinBoLoc);
+            var fileName = $"DanhSachTaiKhoan_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
         [HttpGet]

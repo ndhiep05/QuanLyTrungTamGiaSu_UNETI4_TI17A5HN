@@ -4,6 +4,7 @@ using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Data;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Filters;
 using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.ViewModels;
+using QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Services;
 
 namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
 {
@@ -11,10 +12,12 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
     public class MonHocController : Controller
     {
         private readonly AppDbContext _context;
+        private readonly ExcelExportService _excelService;
 
-        public MonHocController(AppDbContext context)
+        public MonHocController(AppDbContext context, ExcelExportService? excelService = null)
         {
             _context = context;
+            _excelService = excelService ?? new ExcelExportService();
         }
 
         // GET: MonHoc
@@ -93,6 +96,75 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             };
 
             return View(danhSach);
+        }
+
+        // GET: MonHoc/XuatExcel
+        [HttpGet]
+        public async Task<IActionResult> XuatExcel(
+            string? tuKhoa,
+            string? capDo,
+            string? trangThai,
+            string? sapXep)
+        {
+            var truyVan = _context.MonHoc.AsNoTracking();
+
+            tuKhoa = tuKhoa?.Trim();
+            capDo = capDo?.Trim();
+            trangThai = trangThai?.Trim();
+
+            var boLocList = new List<string>();
+
+            if (!string.IsNullOrWhiteSpace(tuKhoa))
+            {
+                truyVan = truyVan.Where(m =>
+                    m.TenMonHoc.Contains(tuKhoa) ||
+                    (m.CapDo != null && m.CapDo.Contains(tuKhoa)) ||
+                    (m.MoTa != null && m.MoTa.Contains(tuKhoa)));
+                boLocList.Add($"Từ khóa: \"{tuKhoa}\"");
+            }
+
+            if (!string.IsNullOrWhiteSpace(capDo))
+            {
+                truyVan = truyVan.Where(m => m.CapDo == capDo);
+                boLocList.Add($"Cấp độ: {capDo}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(trangThai))
+            {
+                if (trangThai.Equals("HoatDong", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Hoạt động", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(m => m.TrangThai == "Hoạt động" || m.TrangThai == "HoatDong");
+                    boLocList.Add("Trạng thái: Hoạt động");
+                }
+                else if (trangThai.Equals("Khoa", StringComparison.OrdinalIgnoreCase) || trangThai.Equals("Khóa", StringComparison.OrdinalIgnoreCase))
+                {
+                    truyVan = truyVan.Where(m => m.TrangThai == "Khóa" || m.TrangThai == "Khoa");
+                    boLocList.Add("Trạng thái: Khóa");
+                }
+                else
+                {
+                    truyVan = truyVan.Where(m => m.TrangThai == trangThai);
+                    boLocList.Add($"Trạng thái: {trangThai}");
+                }
+            }
+
+            truyVan = (sapXep ?? "ten_tang").ToLowerInvariant() switch
+            {
+                "ten_giam" => truyVan.OrderByDescending(m => m.TenMonHoc).ThenBy(m => m.MaMonHoc),
+                "capdo_tang" => truyVan.OrderBy(m => m.CapDo).ThenBy(m => m.TenMonHoc),
+                "id_giam" => truyVan.OrderByDescending(m => m.MaMonHoc),
+                "id_tang" => truyVan.OrderBy(m => m.MaMonHoc),
+                _ => truyVan.OrderBy(m => m.TenMonHoc).ThenBy(m => m.MaMonHoc)
+            };
+
+            var danhSach = await truyVan.ToListAsync();
+            var nguoiXuat = HttpContext.Session.GetString("HoTen") ?? "Quản trị viên";
+            var thongTinBoLoc = boLocList.Any() ? string.Join(", ", boLocList) : "Tất cả";
+
+            var fileBytes = _excelService.XuatDanhSachMonHoc(danhSach, nguoiXuat, thongTinBoLoc);
+            var fileName = $"DanhSachMonHoc_{DateTime.Now:yyyyMMdd_HHmmss}.xlsx";
+
+            return File(fileBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
         }
 
         // GET: MonHoc/Details/5
