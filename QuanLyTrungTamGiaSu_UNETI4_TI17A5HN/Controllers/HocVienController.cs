@@ -206,28 +206,11 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // 6. HỒ SƠ HỌC VIÊN (Dành cho Học viên xem thông tin cá nhân)
+        // 6. HỒ SƠ HỌC VIÊN (Chuyển tiếp đến trang hồ sơ cá nhân dùng chung)
         [HttpGet]
-        public async Task<IActionResult> HoSo()
+        public IActionResult HoSo()
         {
-            var maTaiKhoan = HttpContext.Session.GetInt32("MaTaiKhoan");
-            if (maTaiKhoan == null)
-            {
-                return RedirectToAction("DangNhap", "TaiKhoan");
-            }
-
-            var hocVien = await _context.HocVien
-                .Include(h => h.DangKyLops)
-                    .ThenInclude(d => d.LopHoc)
-                .FirstOrDefaultAsync(h => h.MaTaiKhoan == maTaiKhoan.Value);
-
-            if (hocVien == null)
-            {
-                TempData["Loi"] = "Chưa tìm thấy hồ sơ học viên liên kết với tài khoản này.";
-                return RedirectToAction("Index", "Home");
-            }
-
-            return View(hocVien);
+            return RedirectToAction("HoSo", "TaiKhoan");
         }
 
         private async Task NapDanhSachTaiKhoanAsync(int? selectedId = null)

@@ -1,4 +1,4 @@
-﻿// Họ và tên: Nguyễn Trọng Chuyển | Mã sinh viên: 23103100204 | Nội dung thực hiện: Model Lớp học
+// Họ và tên: Nguyễn Trọng Chuyển | Mã sinh viên: 23103100204 | Nội dung thực hiện: Model Lớp học
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -72,6 +72,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models
         // --- NAVIGATION PROPERTIES ---
         public virtual ICollection<DangKyLop> DangKyLops { get; set; } = new List<DangKyLop>();
         public virtual ICollection<PhanCongGiaSu> PhanCongs { get; set; } = new List<PhanCongGiaSu>();
+        [NotMapped]
         public virtual ICollection<PhanCongGiaSu> PhanCongGiaSus { get; set; } = new List<PhanCongGiaSu>();
         public virtual ICollection<LichHoc> LichHocs { get; set; } = new List<LichHoc>();
     }

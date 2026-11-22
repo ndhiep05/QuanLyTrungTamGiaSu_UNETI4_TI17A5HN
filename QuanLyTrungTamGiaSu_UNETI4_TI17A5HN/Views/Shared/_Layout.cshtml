@@ -2,6 +2,7 @@
 @{
     var vaiTro = Context.Session.GetString("VaiTro");
     var hoTen = Context.Session.GetString("HoTen") ?? "Khách";
+    var anhDaiDien = Context.Session.GetString("AnhDaiDien");
     var daDangNhap = !string.IsNullOrEmpty(vaiTro);
     var ctrl = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
     var act = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
@@ -27,6 +28,8 @@
         menu.Add(("DiemDanh", "Index", "Điểm danh", "bi-check2-square"));
         menu.Add(("", "", "Tài chính", ""));
         menu.Add(("ThanhToanHocPhi", "Index", "Thanh toán học phí", "bi-cash-coin"));
+        menu.Add(("", "", "Cá nhân", ""));
+        menu.Add(("TaiKhoan", "HoSo", "Hồ sơ cá nhân", "bi-person-vcard"));
     }
     else if (vaiTro == "GiaSu")
     {
@@ -36,7 +39,7 @@
         menu.Add(("DiemDanh", "Index", "Điểm danh", "bi-check2-square"));
         menu.Add(("", "", "Cá nhân", ""));
         menu.Add(("ChuyenMonGiaSu", "Index", "Chuyên môn của tôi", "bi-mortarboard"));
-        menu.Add(("GiaSu", "HoSo", "Hồ sơ cá nhân", "bi-person-vcard"));
+        menu.Add(("TaiKhoan", "HoSo", "Hồ sơ cá nhân", "bi-person-vcard"));
     }
     else if (vaiTro == "HocVien")
     {
@@ -47,7 +50,7 @@
         menu.Add(("DiemDanh", "Index", "Điểm danh của tôi", "bi-check2-square"));
         menu.Add(("ThanhToanHocPhi", "Index", "Học phí", "bi-cash-coin"));
         menu.Add(("", "", "Cá nhân", ""));
-        menu.Add(("HocVien", "HoSo", "Hồ sơ cá nhân", "bi-person-vcard"));
+        menu.Add(("TaiKhoan", "HoSo", "Hồ sơ cá nhân", "bi-person-vcard"));
     }
     else
     {
@@ -100,7 +103,14 @@
             <div class="page-crumb">@ViewData["Title"]</div>
             <div class="ms-auto dropdown">
                 <button class="user-chip dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="avatar">@chuCai</span>
+                    @if (!string.IsNullOrEmpty(anhDaiDien))
+                    {
+                        <img src="@anhDaiDien" class="avatar" style="object-fit: cover;" alt="Avatar" />
+                    }
+                    else
+                    {
+                        <span class="avatar">@chuCai</span>
+                    }
                     <span class="text-start d-none d-sm-block">
                         <span class="d-block fw-semibold lh-1">@hoTen</span>
                         <small class="text-muted">@vaiTroText</small>
@@ -109,6 +119,8 @@
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                     @if (daDangNhap)
                     {
+                        <li><a class="dropdown-item" asp-controller="TaiKhoan" asp-action="HoSo"><i class="bi bi-person-circle me-2"></i>Hồ sơ cá nhân</a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" asp-controller="TaiKhoan" asp-action="DangXuat"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</a></li>
                     }
                     else

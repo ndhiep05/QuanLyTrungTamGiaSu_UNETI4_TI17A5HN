@@ -1,0 +1,301 @@
+@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Hồ sơ cá nhân dùng chung *@
+@model QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.ViewModels.HoSoViewModel
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+
+    var (vaiTroLabel, vaiTroClass) = Model.VaiTro switch {
+        "Admin" => ("Quản trị viên", "badge-soft-danger"),
+        "GiaSu" => ("Gia sư", "badge-soft-purple"),
+        "HocVien" => ("Học viên", "badge-soft-info"),
+        _ => (Model.VaiTro, "badge-soft-secondary")
+    };
+
+    var chuCai = string.IsNullOrWhiteSpace(Model.HoTen) ? "?" : Model.HoTen.Trim().Substring(0, 1).ToUpper();
+}
+
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Hồ sơ cá nhân</h1>
+        <p class="page-sub">Xem, cập nhật thông tin cá nhân và thay đổi ảnh đại diện</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Cột trái: Thẻ thông tin tóm tắt & Ảnh đại diện -->
+    <div class="col-lg-4">
+        <div class="card text-center p-4 h-100">
+            <div class="mb-3 d-flex justify-content-center position-relative">
+                <div class="avatar-wrapper position-relative" style="width: 130px; height: 130px;">
+                    @if (!string.IsNullOrEmpty(Model.AnhDaiDien))
+                    {
+                        <img id="avatarPreview" src="@Model.AnhDaiDien" alt="Avatar" class="rounded-circle shadow-sm" style="width: 130px; height: 130px; object-fit: cover; border: 4px solid #eef2ff;" />
+                    }
+                    else
+                    {
+                        <div id="avatarFallback" class="rounded-circle shadow-sm d-flex align-items-center justify-content-center text-white fw-bold" style="width: 130px; height: 130px; font-size: 3rem; background: var(--c-primary); border: 4px solid #eef2ff;">
+                            @chuCai
+                        </div>
+                        <img id="avatarPreview" src="#" alt="Avatar" class="rounded-circle shadow-sm d-none" style="width: 130px; height: 130px; object-fit: cover; border: 4px solid #eef2ff;" />
+                    }
+                </div>
+            </div>
+
+            <h4 class="fw-bold mb-1">@Model.HoTen</h4>
+            <div class="text-muted small mb-2">@@@Model.TenDangNhap</div>
+
+            <div class="d-flex justify-content-center gap-2 mb-3">
+                <span class="badge @vaiTroClass" style="@(Model.VaiTro == "GiaSu" ? "background-color: #ede9fe !important; color: #5b21b6 !important; border: 1px solid #ddd6fe !important;" : "")">@vaiTroLabel</span>
+                <partial name="_TrangThaiBadge" model="Model.TrangThai" />
+            </div>
+
+            <hr class="my-3 text-muted" />
+
+            <div class="text-start small">
+                <div class="d-flex justify-content-between py-1">
+                    <span class="text-muted"><i class="bi bi-envelope me-1"></i> Email:</span>
+                    <span class="fw-semibold text-truncate ms-2" style="max-width: 180px;">@Model.Email</span>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.SoDienThoai))
+                {
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-telephone me-1"></i> Điện thoại:</span>
+                        <span class="fw-semibold">@Model.SoDienThoai</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.DiaChi))
+                {
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-geo-alt me-1"></i> Địa chỉ:</span>
+                        <span class="fw-semibold text-end text-truncate ms-2" style="max-width: 180px;">@Model.DiaChi</span>
+                    </div>
+                }
+                @if (Model.VaiTro == "Admin")
+                {
+                    <div class="alert alert-info py-2 px-3 mt-3 mb-0 small">
+                        <i class="bi bi-shield-check me-1"></i> Toàn quyền quản trị hệ thống trung tâm
+                    </div>
+                }
+                else if (Model.VaiTro == "GiaSu")
+                {
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-mortarboard me-1"></i> Trình độ:</span>
+                        <span class="fw-semibold">@(Model.TrinhDo ?? "Chưa cập nhật")</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-award me-1"></i> Kinh nghiệm:</span>
+                        <span class="fw-semibold">@(Model.KinhNghiem ?? 0) năm</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-easel me-1"></i> Lớp phụ trách:</span>
+                        <span class="fw-semibold">@Model.SoLopPhanCong lớp</span>
+                    </div>
+                }
+                else if (Model.VaiTro == "HocVien")
+                {
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-building me-1"></i> Trường học:</span>
+                        <span class="fw-semibold">@(Model.TruongHoc ?? "Chưa cập nhật")</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-1">
+                        <span class="text-muted"><i class="bi bi-book me-1"></i> Lớp đăng ký:</span>
+                        <span class="fw-semibold">@Model.SoLopDangKy lớp</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Cột phải: Form cập nhật thông tin & Đổi ảnh đại diện -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="bi bi-pencil-square me-1"></i> Cập nhật thông tin cá nhân</span>
+                <span class="text-muted small">Mã tài khoản: #@Model.MaTaiKhoan</span>
+            </div>
+            <div class="card-body p-4">
+                <form asp-action="HoSo" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                    <input type="hidden" asp-for="MaTaiKhoan" />
+                    <input type="hidden" asp-for="TenDangNhap" />
+                    <input type="hidden" asp-for="VaiTro" />
+                    <input type="hidden" asp-for="TrangThai" />
+
+                    <!-- Phần 1: Đổi ảnh đại diện -->
+                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-image me-1"></i> Ảnh đại diện</h6>
+                    <div class="p-3 mb-4 rounded-3 border bg-light">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-8">
+                                <label for="anhDaiDienInput" class="form-label small fw-semibold mb-1">Chọn ảnh mới từ thiết bị</label>
+                                <input type="file" name="anhDaiDienFile" id="anhDaiDienInput" class="form-control" accept=".jpg,.jpeg,.png,.gif,.webp" />
+                                <div class="form-text small">Định dạng hỗ trợ: JPG, PNG, GIF, WEBP. Kích thước tối đa: 5MB.</div>
+                                <span asp-validation-for="AnhDaiDien" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 text-md-end">
+                                @if (!string.IsNullOrEmpty(Model.AnhDaiDien))
+                                {
+                                    <button type="submit" name="xoaAnh" value="true" class="btn btn-outline-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa ảnh đại diện hiện tại không?');">
+                                        <i class="bi bi-trash me-1"></i> Xóa ảnh đại diện
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phần 2: Thông tin tài khoản bắt buộc -->
+                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-person-lines-fill me-1"></i> Thông tin cơ bản</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small">Tên đăng nhập</label>
+                            <input type="text" class="form-control bg-light" value="@Model.TenDangNhap" disabled readonly />
+                            <div class="form-text small">Tên đăng nhập không thể thay đổi.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Vai trò</label>
+                            <input type="text" class="form-control bg-light" value="@vaiTroLabel" disabled readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="HoTen" class="form-label small"></label> <span class="text-danger">*</span>
+                            <input asp-for="HoTen" class="form-control" placeholder="Nhập họ và tên đầy đủ" />
+                            <span asp-validation-for="HoTen" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label small"></label> <span class="text-danger">*</span>
+                            <input asp-for="Email" class="form-control" placeholder="example@email.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <!-- Phần 3: Thông tin chi tiết theo vai trò -->
+                    @if (Model.VaiTro == "GiaSu")
+                    {
+                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-mortarboard me-1"></i> Thông tin Gia sư</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="SoDienThoai" class="form-label small"></label>
+                                <input asp-for="SoDienThoai" class="form-control" placeholder="09xxxxxxxx" />
+                                <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="TrinhDo" class="form-label small"></label>
+                                <input asp-for="TrinhDo" class="form-control" placeholder="Cử nhân Sư phạm, Thạc sĩ..." />
+                                <span asp-validation-for="TrinhDo" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="KinhNghiem" class="form-label small"></label>
+                                <input asp-for="KinhNghiem" type="number" min="0" max="60" class="form-control" />
+                                <span asp-validation-for="KinhNghiem" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="DiaChi" class="form-label small"></label>
+                                <input asp-for="DiaChi" class="form-control" placeholder="Địa chỉ hiện tại" />
+                                <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                            </div>
+
+                            @if (Model.DanhSachChuyenMon.Any())
+                            {
+                                <div class="col-12">
+                                    <label class="form-label small mb-1">Môn học chuyên môn:</label>
+                                    <div>
+                                        @foreach (var cm in Model.DanhSachChuyenMon)
+                                        {
+                                            <span class="chip"><i class="bi bi-check-circle-fill me-1 text-primary"></i>@cm</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (Model.VaiTro == "HocVien")
+                    {
+                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-backpack me-1"></i> Thông tin Học viên</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="SoDienThoai" class="form-label small"></label>
+                                <input asp-for="SoDienThoai" class="form-control" placeholder="09xxxxxxxx" />
+                                <span asp-validation-for="SoDienThoai" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="NgaySinh" class="form-label small"></label>
+                                <input asp-for="NgaySinh" type="date" class="form-control" />
+                                <span asp-validation-for="NgaySinh" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="GioiTinh" class="form-label small"></label>
+                                <select asp-for="GioiTinh" class="form-select">
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Khác">Khác</option>
+                                </select>
+                                <span asp-validation-for="GioiTinh" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="TruongHoc" class="form-label small"></label>
+                                <input asp-for="TruongHoc" class="form-control" placeholder="Trường đang theo học" />
+                                <span asp-validation-for="TruongHoc" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="LopHocHienTai" class="form-label small"></label>
+                                <input asp-for="LopHocHienTai" class="form-control" placeholder="VD: Lớp 10, Lớp 12, Đại học..." />
+                                <span asp-validation-for="LopHocHienTai" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="TrinhDoHienTai" class="form-label small"></label>
+                                <input asp-for="TrinhDoHienTai" class="form-control" placeholder="VD: Khá, Giỏi, Trung bình..." />
+                                <span asp-validation-for="TrinhDoHienTai" class="text-danger small"></span>
+                            </div>
+                            <div class="col-12">
+                                <label asp-for="DiaChi" class="form-label small"></label>
+                                <input asp-for="DiaChi" class="form-control" placeholder="Địa chỉ nơi ở hiện tại" />
+                                <span asp-validation-for="DiaChi" class="text-danger small"></span>
+                            </div>
+
+                            @if (Model.DanhSachLopHoc.Any())
+                            {
+                                <div class="col-12">
+                                    <label class="form-label small mb-1">Các lớp học đã đăng ký:</label>
+                                    <div>
+                                        @foreach (var lop in Model.DanhSachLopHoc)
+                                        {
+                                            <span class="chip"><i class="bi bi-bookmark-check-fill me-1 text-info"></i>@lop</span>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+
+                    <div class="form-actions mt-4 pt-3 border-top d-flex gap-2">
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg me-1"></i> Lưu thay đổi</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-light"><i class="bi bi-arrow-left me-1"></i> Quay lại</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Xem trước ảnh đại diện trực tiếp khi chọn file
+        document.getElementById('anhDaiDienInput')?.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const preview = document.getElementById('avatarPreview');
+                    const fallback = document.getElementById('avatarFallback');
+
+                    preview.src = event.target.result;
+                    preview.classList.remove('d-none');
+                    if (fallback) {
+                        fallback.classList.add('d-none');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+}

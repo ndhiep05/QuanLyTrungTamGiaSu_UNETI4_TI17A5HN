@@ -40,6 +40,10 @@ public class TaiKhoan
     [Display(Name = "Trạng thái")]
     public string TrangThai { get; set; } = TrangThaiChung.HoatDong;
 
+    [StringLength(255)]
+    [Display(Name = "Ảnh đại diện")]
+    public string? AnhDaiDien { get; set; }
+
     public GiaSu? GiaSu { get; set; }
     public HocVien? HocVien { get; set; }
 }

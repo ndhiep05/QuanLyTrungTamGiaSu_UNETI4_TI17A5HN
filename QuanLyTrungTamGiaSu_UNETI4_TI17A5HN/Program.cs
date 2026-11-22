@@ -47,7 +47,7 @@ try
         // Tạo CSDL nếu chưa tồn tại
         context.Database.EnsureCreated();
 
-        // Tự động kiểm tra và thêm các cột còn thiếu vào bảng LopHoc và HocVien để đồng bộ tuyệt đối với Model
+        // Tự động kiểm tra và thêm các cột còn thiếu vào bảng LopHoc, HocVien, TaiKhoan để đồng bộ tuyệt đối với Model
         context.Database.ExecuteSqlRaw(@"
             IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[LopHoc]') AND name = 'CapDo')
                 ALTER TABLE [dbo].[LopHoc] ADD [CapDo] NVARCHAR(100) NULL;
@@ -63,6 +63,9 @@ try
 
             IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[HocVien]') AND name = 'LopHocHienTai')
                 ALTER TABLE [dbo].[HocVien] ADD [LopHocHienTai] NVARCHAR(50) NULL;
+
+            IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[TaiKhoan]') AND name = 'AnhDaiDien')
+                ALTER TABLE [dbo].[TaiKhoan] ADD [AnhDaiDien] NVARCHAR(255) NULL;
         ");
 
         // Tự động khởi tạo user admin nếu chưa có

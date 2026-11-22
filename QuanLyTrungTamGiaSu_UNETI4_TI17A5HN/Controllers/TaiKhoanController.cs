@@ -12,10 +12,15 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
     {
         private readonly AppDbContext _context;
         private readonly ExcelExportService _excelService;
+        private readonly IWebHostEnvironment? _env;
 
-        public TaiKhoanController(AppDbContext context, ExcelExportService? excelService = null)
+        public TaiKhoanController(
+            AppDbContext context,
+            IWebHostEnvironment? env = null,
+            ExcelExportService? excelService = null)
         {
             _context = context;
+            _env = env;
             _excelService = excelService ?? new ExcelExportService();
         }
 
@@ -67,6 +72,7 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
             HttpContext.Session.SetString("HoTen", taiKhoan.HoTen);
             HttpContext.Session.SetInt32("MaTaiKhoan", taiKhoan.MaTaiKhoan);
             HttpContext.Session.SetString("TenDangNhap", taiKhoan.TenDangNhap);
+            HttpContext.Session.SetString("AnhDaiDien", taiKhoan.AnhDaiDien ?? "");
 
             if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
@@ -94,6 +100,272 @@ namespace QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Controllers
         public IActionResult AccessDenied()
         {
             return RedirectToAction("KhongCoQuyen", "Home");
+        }
+
+        // =====================================================================
+        // TRANG HỒ SƠ CÁ NHÂN DÙNG CHUNG CHO CẢ BA VAI TRÒ (ADMIN, GIA SƯ, HỌC VIÊN)
+        // =====================================================================
+
+        // GET: TaiKhoan/HoSo
+        [HttpGet]
+        public async Task<IActionResult> HoSo()
+        {
+            var maTaiKhoan = HttpContext.Session.GetInt32("MaTaiKhoan");
+            if (maTaiKhoan == null)
+            {
+                return RedirectToAction(nameof(DangNhap), new { returnUrl = "/TaiKhoan/HoSo" });
+            }
+
+            var taiKhoan = await _context.TaiKhoan
+                .Include(t => t.GiaSu)
+                    .ThenInclude(g => g!.ChuyenMons)
+                        .ThenInclude(c => c.MonHoc)
+                .Include(t => t.GiaSu)
+                    .ThenInclude(g => g!.PhanCongs)
+                .Include(t => t.HocVien)
+                    .ThenInclude(h => h!.DangKyLops)
+                        .ThenInclude(d => d.LopHoc)
+                .FirstOrDefaultAsync(t => t.MaTaiKhoan == maTaiKhoan.Value);
+
+            if (taiKhoan == null)
+            {
+                HttpContext.Session.Clear();
+                return RedirectToAction(nameof(DangNhap));
+            }
+
+            var model = new HoSoViewModel
+            {
+                MaTaiKhoan = taiKhoan.MaTaiKhoan,
+                TenDangNhap = taiKhoan.TenDangNhap,
+                HoTen = taiKhoan.HoTen,
+                Email = taiKhoan.Email,
+                VaiTro = taiKhoan.VaiTro,
+                TrangThai = taiKhoan.TrangThai,
+                AnhDaiDien = taiKhoan.AnhDaiDien
+            };
+
+            if (taiKhoan.GiaSu != null)
+            {
+                model.SoDienThoai = taiKhoan.GiaSu.SoDienThoai;
+                model.DiaChi = taiKhoan.GiaSu.DiaChi;
+                model.TrinhDo = taiKhoan.GiaSu.TrinhDo;
+                model.KinhNghiem = taiKhoan.GiaSu.KinhNghiem;
+                model.DanhSachChuyenMon = taiKhoan.GiaSu.ChuyenMons
+                    .Where(c => c.MonHoc != null)
+                    .Select(c => c.MonHoc!.TenMonHoc)
+                    .ToList();
+                model.SoLopPhanCong = taiKhoan.GiaSu.PhanCongs.Count;
+            }
+
+            if (taiKhoan.HocVien != null)
+            {
+                model.SoDienThoai = taiKhoan.HocVien.SoDienThoai;
+                model.DiaChi = taiKhoan.HocVien.DiaChi;
+                model.NgaySinh = taiKhoan.HocVien.NgaySinh;
+                model.GioiTinh = taiKhoan.HocVien.GioiTinh;
+                model.TruongHoc = taiKhoan.HocVien.TruongHoc;
+                model.LopHocHienTai = taiKhoan.HocVien.LopHocHienTai;
+                model.TrinhDoHienTai = taiKhoan.HocVien.TrinhDoHienTai;
+                model.SoLopDangKy = taiKhoan.HocVien.DangKyLops.Count;
+                model.DanhSachLopHoc = taiKhoan.HocVien.DangKyLops
+                    .Where(d => d.LopHoc != null)
+                    .Select(d => d.LopHoc!.TenLop)
+                    .ToList();
+            }
+
+            return View(model);
+        }
+
+        // POST: TaiKhoan/HoSo
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> HoSo(HoSoViewModel model, IFormFile? anhDaiDienFile, bool xoaAnh = false)
+        {
+            var maTaiKhoan = HttpContext.Session.GetInt32("MaTaiKhoan");
+            if (maTaiKhoan == null)
+            {
+                return RedirectToAction(nameof(DangNhap), new { returnUrl = "/TaiKhoan/HoSo" });
+            }
+
+            if (model.MaTaiKhoan != maTaiKhoan.Value)
+            {
+                return Forbid();
+            }
+
+            var taiKhoan = await _context.TaiKhoan
+                .Include(t => t.GiaSu)
+                    .ThenInclude(g => g!.ChuyenMons)
+                        .ThenInclude(c => c.MonHoc)
+                .Include(t => t.GiaSu)
+                    .ThenInclude(g => g!.PhanCongs)
+                .Include(t => t.HocVien)
+                    .ThenInclude(h => h!.DangKyLops)
+                        .ThenInclude(d => d.LopHoc)
+                .FirstOrDefaultAsync(t => t.MaTaiKhoan == maTaiKhoan.Value);
+
+            if (taiKhoan == null)
+            {
+                return NotFound();
+            }
+
+            var hoTenMoi = model.HoTen?.Trim() ?? "";
+            var emailMoi = model.Email?.Trim() ?? "";
+
+            if (string.IsNullOrWhiteSpace(hoTenMoi))
+            {
+                ModelState.AddModelError(nameof(model.HoTen), "Vui lòng nhập họ và tên.");
+            }
+
+            if (string.IsNullOrWhiteSpace(emailMoi))
+            {
+                ModelState.AddModelError(nameof(model.Email), "Vui lòng nhập email.");
+            }
+            else if (await _context.TaiKhoan.AnyAsync(t => t.MaTaiKhoan != taiKhoan.MaTaiKhoan && t.Email.ToLower() == emailMoi.ToLower()))
+            {
+                ModelState.AddModelError(nameof(model.Email), "Email này đã được sử dụng bởi một tài khoản khác.");
+            }
+
+            // Xử lý đổi ảnh đại diện hoặc xóa ảnh
+            if (xoaAnh)
+            {
+                if (!string.IsNullOrEmpty(taiKhoan.AnhDaiDien))
+                {
+                    XoaFileAnhCu(taiKhoan.AnhDaiDien);
+                    taiKhoan.AnhDaiDien = null;
+                }
+            }
+            else if (anhDaiDienFile != null && anhDaiDienFile.Length > 0)
+            {
+                var duoiFile = Path.GetExtension(anhDaiDienFile.FileName).ToLowerInvariant();
+                var cacDuoiHopLe = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp" };
+                if (!cacDuoiHopLe.Contains(duoiFile))
+                {
+                    ModelState.AddModelError("AnhDaiDien", "Chỉ chấp nhận file ảnh định dạng .jpg, .jpeg, .png, .gif, .webp.");
+                }
+                else if (anhDaiDienFile.Length > 5 * 1024 * 1024)
+                {
+                    ModelState.AddModelError("AnhDaiDien", "Dung lượng ảnh đại diện không được vượt quá 5MB.");
+                }
+                else
+                {
+                    var webRoot = _env?.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var thuMucUpload = Path.Combine(webRoot, "uploads", "avatars");
+                    if (!Directory.Exists(thuMucUpload))
+                    {
+                        Directory.CreateDirectory(thuMucUpload);
+                    }
+
+                    if (!string.IsNullOrEmpty(taiKhoan.AnhDaiDien))
+                    {
+                        XoaFileAnhCu(taiKhoan.AnhDaiDien);
+                    }
+
+                    var tenFileMoi = $"avatar_{taiKhoan.MaTaiKhoan}_{DateTime.Now.Ticks}{duoiFile}";
+                    var duongDanDayDu = Path.Combine(thuMucUpload, tenFileMoi);
+                    using (var stream = new FileStream(duongDanDayDu, FileMode.Create))
+                    {
+                        await anhDaiDienFile.CopyToAsync(stream);
+                    }
+
+                    taiKhoan.AnhDaiDien = $"/uploads/avatars/{tenFileMoi}";
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Giữ lại các thông tin hiển thị phụ
+                model.TenDangNhap = taiKhoan.TenDangNhap;
+                model.VaiTro = taiKhoan.VaiTro;
+                model.TrangThai = taiKhoan.TrangThai;
+                model.AnhDaiDien = taiKhoan.AnhDaiDien;
+
+                if (taiKhoan.GiaSu != null)
+                {
+                    model.DanhSachChuyenMon = taiKhoan.GiaSu.ChuyenMons
+                        .Where(c => c.MonHoc != null)
+                        .Select(c => c.MonHoc!.TenMonHoc)
+                        .ToList();
+                    model.SoLopPhanCong = taiKhoan.GiaSu.PhanCongs.Count;
+                }
+
+                if (taiKhoan.HocVien != null)
+                {
+                    model.SoLopDangKy = taiKhoan.HocVien.DangKyLops.Count;
+                    model.DanhSachLopHoc = taiKhoan.HocVien.DangKyLops
+                        .Where(d => d.LopHoc != null)
+                        .Select(d => d.LopHoc!.TenLop)
+                        .ToList();
+                }
+
+                return View(model);
+            }
+
+            // Cập nhật thông tin cơ bản
+            taiKhoan.HoTen = hoTenMoi;
+            taiKhoan.Email = emailMoi;
+
+            // Đồng bộ hồ sơ Gia sư nếu có
+            if (taiKhoan.GiaSu != null)
+            {
+                taiKhoan.GiaSu.HoTen = hoTenMoi;
+                taiKhoan.GiaSu.Email = emailMoi;
+                if (!string.IsNullOrWhiteSpace(model.SoDienThoai))
+                    taiKhoan.GiaSu.SoDienThoai = model.SoDienThoai.Trim();
+                taiKhoan.GiaSu.DiaChi = model.DiaChi?.Trim();
+                if (!string.IsNullOrWhiteSpace(model.TrinhDo))
+                    taiKhoan.GiaSu.TrinhDo = model.TrinhDo.Trim();
+                if (model.KinhNghiem.HasValue)
+                    taiKhoan.GiaSu.KinhNghiem = model.KinhNghiem.Value;
+            }
+
+            // Đồng bộ hồ sơ Học viên nếu có
+            if (taiKhoan.HocVien != null)
+            {
+                taiKhoan.HocVien.HoTen = hoTenMoi;
+                taiKhoan.HocVien.Email = emailMoi;
+                if (!string.IsNullOrWhiteSpace(model.SoDienThoai))
+                    taiKhoan.HocVien.SoDienThoai = model.SoDienThoai.Trim();
+                taiKhoan.HocVien.DiaChi = model.DiaChi?.Trim();
+                if (model.NgaySinh.HasValue)
+                    taiKhoan.HocVien.NgaySinh = model.NgaySinh.Value;
+                if (!string.IsNullOrWhiteSpace(model.GioiTinh))
+                    taiKhoan.HocVien.GioiTinh = model.GioiTinh.Trim();
+                taiKhoan.HocVien.TruongHoc = model.TruongHoc?.Trim();
+                taiKhoan.HocVien.LopHocHienTai = model.LopHocHienTai?.Trim();
+                taiKhoan.HocVien.TrinhDoHienTai = model.TrinhDoHienTai?.Trim();
+            }
+
+            await _context.SaveChangesAsync();
+
+            // Cập nhật session cho giao diện topbar
+            HttpContext.Session.SetString("HoTen", taiKhoan.HoTen);
+            HttpContext.Session.SetString("AnhDaiDien", taiKhoan.AnhDaiDien ?? "");
+
+            TempData["ThanhCong"] = "Cập nhật hồ sơ cá nhân thành công!";
+            TempData["ThongBao"] = TempData["ThanhCong"];
+
+            return RedirectToAction(nameof(HoSo));
+        }
+
+        private void XoaFileAnhCu(string duongDanAnh)
+        {
+            try
+            {
+                if (duongDanAnh.StartsWith("/uploads/avatars/"))
+                {
+                    var webRoot = _env?.WebRootPath ?? Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+                    var relativePath = duongDanAnh.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+                    var fullPath = Path.Combine(webRoot, relativePath);
+                    if (System.IO.File.Exists(fullPath))
+                    {
+                        System.IO.File.Delete(fullPath);
+                    }
+                }
+            }
+            catch
+            {
+                // Bỏ qua lỗi xóa file cũ nếu có
+            }
         }
 
         [HttpGet]
