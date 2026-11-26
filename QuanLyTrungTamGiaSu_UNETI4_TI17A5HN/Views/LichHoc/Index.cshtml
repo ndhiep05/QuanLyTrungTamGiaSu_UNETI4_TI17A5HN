@@ -1,4 +1,4 @@
-@* Họ và tên: <Điền họ và tên> | Mã sinh viên: 23103100230 | Nội dung thực hiện: Giao diện dùng chung (SV1) *@
+@* Họ và tên: SV4 | Nội dung thực hiện: Giao diện Lịch học (SV4) *@
 @model IEnumerable<QuanLyTrungTamGiaSu_UNETI4_TI17A5HN.Models.LichHoc>
 @{
     ViewData["Title"] = "Lịch học";
@@ -62,11 +62,16 @@
                         <td>@(item.PhongHocHoacHinhThuc)</td>
                         <td><partial name="_TrangThaiBadge" model="item.TrangThai" /></td>
                         <td class="text-end text-nowrap">
-
-                @if ((laAdmin || vaiTro == "GiaSu") && item.TrangThai == TrangThaiLich.DaLenLich)
-                {
-                    <a asp-controller="DiemDanh" asp-action="TheoBuoi" asp-route-maLichHoc="@item.MaLichHoc" class="btn btn-sm btn-outline-success">Điểm danh</a>
-                }
+                            @if ((laAdmin || vaiTro == "GiaSu") && item.TrangThai == TrangThaiLich.DaLenLich)
+                            {
+                                <a asp-controller="DiemDanh" asp-action="TheoBuoi" asp-route-maLichHoc="@item.MaLichHoc" class="btn btn-sm btn-outline-success" title="Điểm danh"><i class="bi bi-check2-square"></i> Điểm danh</a>
+                                <form asp-action="HoanThanh" asp-route-id="@item.MaLichHoc" method="post" class="d-inline" onsubmit="return confirm('Xác nhận hoàn thành buổi học này?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-info" title="Hoàn thành"><i class="bi bi-check-circle"></i></button>
+                                </form>
+                                <form asp-action="Huy" asp-route-id="@item.MaLichHoc" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn hủy buổi học này?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-warning" title="Hủy buổi học"><i class="bi bi-x-circle"></i></button>
+                                </form>
+                            }
                             @if (laAdmin)
                             {
                                 <a asp-action="Edit" asp-route-id="@item.MaLichHoc" class="btn btn-sm btn-outline-primary" title="Sửa"><i class="bi bi-pencil"></i></a>

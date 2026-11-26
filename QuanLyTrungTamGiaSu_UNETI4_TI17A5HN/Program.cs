@@ -66,6 +66,15 @@ try
 
             IF NOT EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[TaiKhoan]') AND name = 'AnhDaiDien')
                 ALTER TABLE [dbo].[TaiKhoan] ADD [AnhDaiDien] NVARCHAR(255) NULL;
+
+            IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[ChuyenMonGiaSu]') AND name = 'TrinhDoChuyenMon')
+                ALTER TABLE [dbo].[ChuyenMonGiaSu] ALTER COLUMN [TrinhDoChuyenMon] NVARCHAR(200) NULL;
+
+            IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[ChuyenMonGiaSu]') AND name = 'SoNamKinhNghiemMon')
+                ALTER TABLE [dbo].[ChuyenMonGiaSu] ALTER COLUMN [SoNamKinhNghiemMon] INT NULL;
+
+            IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[LopHoc]') AND name = 'TrinhDoLop')
+                ALTER TABLE [dbo].[LopHoc] ALTER COLUMN [TrinhDoLop] NVARCHAR(100) NULL;
         ");
 
         // Tự động khởi tạo user admin nếu chưa có

@@ -17,7 +17,7 @@
         @if (laAdmin)
         {
             <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Thêm mới lớp học
+                <i class="bi bi-plus-lg me-1"></i> Thêm mới lớp học
             </a>
         }
     </div>
@@ -28,7 +28,7 @@
             <form method="get" asp-action="Index" class="row g-3 align-items-center">
                 <div class="col-md-6">
                     <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
                         <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên lớp hoặc mô tả..." />
                     </div>
                 </div>
@@ -38,8 +38,8 @@
                     </select>
                 </div>
                 <div class="col-md-2 d-flex gap-2">
-                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-filter me-1"></i> Lọc</button>
-                    <a asp-action="Index" class="btn btn-outline-secondary"><i class="fas fa-redo"></i></a>
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-funnel me-1"></i> Lọc</button>
+                    <a asp-action="Index" class="btn btn-outline-secondary" title="Đặt lại bộ lọc"><i class="bi bi-arrow-clockwise"></i></a>
                 </div>
             </form>
         </div>
@@ -51,7 +51,7 @@
             @if (Model == null || !Model.Any())
             {
                 <div class="text-center py-5 text-muted">
-                    <i class="fas fa-inbox fa-3x mb-3 text-secondary"></i>
+                    <i class="bi bi-inbox fs-1 mb-3 text-secondary d-block"></i>
                     <p class="mb-0">Không có dữ liệu lớp học phù hợp.</p>
                 </div>
             }
@@ -79,9 +79,16 @@
                                     <td>@(item.MonHoc?.TenMonHoc ?? "N/A")</td>
                                     <td>@(item.TrinhDoLop ?? "Căn bản")</td>
                                     <td>
-                                        <small class="text-muted">
-                                            @(item.NgayBatDau.ToString("dd/MM/yyyy")) – @(item.NgayKetThuc.ToString("dd/MM/yyyy"))
-                                        </small>
+                                        @if (item.NgayBatDau > new DateTime(1900, 1, 1) && item.NgayKetThuc > new DateTime(1900, 1, 1))
+                                        {
+                                            <small class="text-muted">
+                                                @(item.NgayBatDau.ToString("dd/MM/yyyy")) – @(item.NgayKetThuc.ToString("dd/MM/yyyy"))
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <small class="text-muted fst-italic">Chưa xếp lịch</small>
+                                        }
                                     </td>
                                     <td><span class="badge bg-light text-dark border">@item.SiSoToiDa học viên</span></td>
                                     <td class="fw-bold text-success">@(item.HocPhi.ToString("N0")) ₫</td>
@@ -101,7 +108,7 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a asp-action="Details" asp-route-id="@item.MaLop" class="btn btn-outline-info" title="Chi tiết"><i class="fas fa-eye"></i></a>
+                                            <a asp-action="Details" asp-route-id="@item.MaLop" class="btn btn-outline-info" title="Chi tiết"><i class="bi bi-eye"></i></a>
 
                                             @if (vaiTro == "HocVien" && item.TrangThai == "Đang mở đăng ký")
                                             {
@@ -113,11 +120,11 @@
 
                                             @if (laAdmin)
                                             {
-                                                <a asp-action="Edit" asp-route-id="@item.MaLop" class="btn btn-outline-warning" title="Sửa"><i class="fas fa-edit"></i></a>
+                                                <a asp-action="Edit" asp-route-id="@item.MaLop" class="btn btn-outline-warning" title="Sửa"><i class="bi bi-pencil"></i></a>
                                                 
                                                 <form asp-action="Delete" asp-route-id="@item.MaLop" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa lớp học này?');">
                                                     @Html.AntiForgeryToken()
-                                                    <button type="submit" class="btn btn-outline-danger" title="Xóa"><i class="fas fa-trash"></i></button>
+                                                    <button type="submit" class="btn btn-outline-danger" title="Xóa"><i class="bi bi-trash"></i></button>
                                                 </form>
                                             }
                                         </div>
