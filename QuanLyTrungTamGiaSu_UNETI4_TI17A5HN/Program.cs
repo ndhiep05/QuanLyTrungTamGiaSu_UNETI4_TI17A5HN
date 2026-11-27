@@ -75,6 +75,10 @@ try
 
             IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID(N'[dbo].[LopHoc]') AND name = 'TrinhDoLop')
                 ALTER TABLE [dbo].[LopHoc] ALTER COLUMN [TrinhDoLop] NVARCHAR(100) NULL;
+
+            UPDATE [dbo].[LopHoc]
+            SET [NgayBatDau] = '2026-11-25', [NgayKetThuc] = '2027-02-25'
+            WHERE [NgayBatDau] < '1900-01-01' OR [NgayKetThuc] < '1900-01-01';
         ");
 
         // Tự động khởi tạo user admin nếu chưa có
